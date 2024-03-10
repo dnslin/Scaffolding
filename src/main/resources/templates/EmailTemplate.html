@@ -1,0 +1,38 @@
+<div style="" class="app" xmlns:text-decoration="http://www.w3.org/1999/xhtml">
+    <div style="width:100%;background:#49BDAD;color:#fff;border-radius:10px 10px 0 0;background-image:-moz-linear-gradient(0deg,#43c6b8,#ffd1f4);background-image:-webkit-linear-gradient(0deg,#43c6b8,#ffd1f4);height:66px">
+        <p style="font-size:15px;word-break:break-all;padding:23px 32px;margin:0;background-color:hsla(0,0%,100%,.4);border-radius:10px 10px 0 0">
+            邮件信息通知
+            <a href="https://dnsl.in/" style="text-decoration:none;color:#fff" target="_blank" rel="noopener">
+            </a>
+        </p>
+    </div>
+    <div style="margin:40px auto;width:90%">
+        <p>消息详情如下：</p>
+        <div style="background:#fafafa repeating-linear-gradient(-45deg,#fff,#fff 1.125rem,transparent 1.125rem,transparent 2.25rem);box-shadow:0 2px 5px rgba(0,0,0,.15);margin:20px 0;padding:15px;border-radius:5px;font-size:14px;color:#555">
+            <table>
+                <tr>
+                    <td id="Text">消息头:<span th:text="${Text}"></span></td>
+                </tr>
+                <tr>
+                    <td id="Message">邮件内容: <span th:text="${Message}"></span></td>
+                </tr>
+            </table>
+            <p>如有疑问请联系开发者=> Email: <span>dnslint@gmail.com</span></p>
+        </div>
+        <p>请注意: 此邮件由 <a text-decoration:none href="https://dnslin.com/" style="color:#12addb" target="_blank" rel="noopener">
+            DnsLinMail</a>邮件服务自动发送，请勿直接回复。</p>
+        <p>若此邮件不是您请求的，请忽略并删除！</p>
+    </div>
+    <style>
+        a {
+            text-decoration: none;
+        }
+        span {
+            color: rgb(65, 154, 182);
+            font-weight: bold;
+        }
+        .app {
+            font-family: STXihei, "华文细黑", "Microsoft YaHei", "微软雅黑",serif;
+        }
+    </style>
+</div>
