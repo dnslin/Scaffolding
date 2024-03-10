@@ -42,3 +42,4 @@ build/
 .DS_Store
 
 Scaffolding.iml
+/.idea/dataSources.xml
