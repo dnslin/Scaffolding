@@ -34,3 +34,5 @@ logging:
 
 server:
   port: 1230
+  tomcat:
+    max-http-form-post-size: 60000000
