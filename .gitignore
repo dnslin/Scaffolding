@@ -43,4 +43,4 @@ build/
 
 Scaffolding.iml
 /.idea/dataSources.xml
-!/src/main/resources/application.yaml
+/src/main/resources/application.yaml
