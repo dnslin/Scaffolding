@@ -1,11 +1,10 @@
 spring:
   datasource:
-    url: jdbc:sqlite:sql.db
+    url: jdbc:sqlite:sqlite-jpa.db
     driver-class-name: org.sqlite.JDBC
     username:
     password:
     hikari:
-      # HikariCP settings
       poolName: Hikari
       maximumPoolSize: 20
       minimumIdle: 5
@@ -15,9 +14,10 @@ spring:
 
   jpa:
     database-platform: org.hibernate.community.dialect.SQLiteDialect
-    open-in-view: false
+    open-in-view: true
     hibernate:
       ddl-auto: update
+    show-sql: true
 
   data:
     redis:
@@ -25,18 +25,15 @@ spring:
       port: 16379
       database: 0
       password: dnslin-redis
-  sql:
-    init:
-      mode: always
-      schema-locations: classpath:db/schema.sql
-
-# Logging level
 logging:
   level:
     org.springframework.web: DEBUG
-    org.hibernate: ERROR
+    org.hibernate:
+      sql: DEBUG
+    org.hibernate.type.descriptor.sql: TRACE
+
 
 server:
-  port: 1230
+  port: 2341
   tomcat:
     max-http-form-post-size: 60000000
