@@ -25,6 +25,10 @@ spring:
       port: 16379
       database: 0
       password: dnslin-redis
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:db/schema.sql
 
 # Logging level
 logging:
