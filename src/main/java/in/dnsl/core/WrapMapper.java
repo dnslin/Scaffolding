@@ -96,6 +96,10 @@ public class WrapMapper {
         return wrap(Wrapper.ERROR_CODE, StringUtils.isBlank(message) ? Wrapper.ERROR_MESSAGE : message);
     }
 
+    public static <E> Wrapper<E> error(String message,E o) {
+        return wrap(Wrapper.ERROR_CODE, message,o);
+    }
+
     /**
      * Error wrapper.
      *

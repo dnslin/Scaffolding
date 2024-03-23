@@ -84,7 +84,7 @@ public class UniqueIdGenerator {
     /**
      * 生成唯一id的具体实现
      */
-    private synchronized long genUniqueId() {
+    public synchronized long genUniqueId() {
         long current = System.currentTimeMillis();
 
         if (current < lastTimestamp) {

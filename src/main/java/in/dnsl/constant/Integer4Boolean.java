@@ -34,4 +34,7 @@ public class Integer4Boolean{
     public static final Integer INTEGER_NINE = 9;
 
     public static final Integer INTEGER_TEN = 10;
+
+
+    public static final Long APP_HOST = 8091L;
 }

@@ -18,7 +18,6 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: true
-
   data:
     redis:
       host: 10.0.0.182

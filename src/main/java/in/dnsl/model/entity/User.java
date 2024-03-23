@@ -1,23 +1,21 @@
 package in.dnsl.model.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
 @Getter
 @Setter
 @ToString
+@Builder
 @RequiredArgsConstructor
 @Entity
 @Table(name = "users")
+@AllArgsConstructor
 public class User {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     @Column(nullable = false, unique = true, length = 255)
     private String username;
@@ -25,8 +23,21 @@ public class User {
     @Column(nullable = false, length = 255)
     private String password;
 
+    @Column(nullable = false, length = 255)
+    private String email;
+
+    @Column(nullable = false, length = 255)
+    private String nickname;
+
+    @Column(nullable = false, length = 255)
+    private String avatar;
+
     @Column(nullable = false)
-    private Boolean enabled;
+    private String salt;
+    // 默认值为true
+    @Column(nullable = false)
+    @Builder.Default
+    private Boolean enabled = true;
 
     @Column(name = "last_login_time")
     private LocalDateTime lastLoginTime;
