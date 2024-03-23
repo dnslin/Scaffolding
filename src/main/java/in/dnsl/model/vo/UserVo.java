@@ -21,7 +21,7 @@ public class UserVo {
     private String email;
 
     @NotBlank(message = "昵称不能为空")
-    @Size(max = 128, message = "昵称长度最大为128个字符")
+    @Size(max = 28, message = "昵称长度最大为28个字符")
     private String nickname;
 
     private String avatar;
