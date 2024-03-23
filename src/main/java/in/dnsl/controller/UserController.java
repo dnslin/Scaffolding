@@ -5,6 +5,8 @@ import in.dnsl.core.WrapMapper;
 import in.dnsl.core.Wrapper;
 import in.dnsl.model.vo.UserVo;
 import in.dnsl.service.UserService;
+import in.dnsl.utils.IPUtils;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
@@ -29,8 +31,10 @@ public class UserController {
      */
     @SaIgnore
     @PostMapping("/create")
-    public Wrapper<?> createUser(@Validated @RequestBody UserVo info) {
+    public Wrapper<?> createUser(@Validated @RequestBody UserVo info, HttpServletRequest request) {
         log.info("创建用户...");
+        String ipAddress = IPUtils.getClientIp(request);
+        log.info("用户IP地址: {}", ipAddress);
         userService.createUser(info);
         return WrapMapper.ok();
     }
