@@ -8,6 +8,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -45,6 +46,12 @@ public class ControllerExceptionAdvice {
         ex.getBindingResult().getFieldErrors().forEach(error ->
                 errors.put(error.getField(), error.getDefaultMessage()));
         return WrapMapper.wrap(500, "数据验证错误",errors);
+    }
+
+    @ExceptionHandler(NoResourceFoundException.class)
+    public String handleNoHandlerFoundException(NoResourceFoundException ex) {
+        log.error("404异常",ex);
+        return "redirect:/error/404";
     }
 
 }
