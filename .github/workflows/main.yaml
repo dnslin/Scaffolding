@@ -9,7 +9,7 @@ on:
       - v1.*
       - v0.*
   pull_request:
-    branches: [ main ]
+    branches: [ master ]
 permissions:
   contents: write
 jobs:
