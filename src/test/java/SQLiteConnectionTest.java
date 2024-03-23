@@ -1,6 +1,8 @@
+import lombok.extern.slf4j.Slf4j;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
-
+@Slf4j
 public class SQLiteConnectionTest {
     public static void main(String[] args) {
         try {
@@ -11,7 +13,7 @@ public class SQLiteConnectionTest {
             System.out.println("数据库连接成功");
             conn.close();
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("数据库连接失败", e);
         }
     }
 }

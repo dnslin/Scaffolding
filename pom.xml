@@ -21,6 +21,7 @@
         <commons-lang3.version>3.14.0</commons-lang3.version>
         <commons-io.version>2.15.1</commons-io.version>
         <spring-boot.version>3.2.2</spring-boot.version>
+        <sa-token.version>1.37.0</sa-token.version>
     </properties>
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -62,6 +63,18 @@
                 </exclusion>
             </exclusions>
         </dependency>
+        <!-- 热刷新 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-devtools</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <!-- ConfigurationProperties -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+            <optional>true</optional>
+        </dependency>
         <dependency>
             <groupId>org.xerial</groupId>
             <artifactId>sqlite-jdbc</artifactId>
@@ -93,6 +106,25 @@
             <artifactId>commons-io</artifactId>
             <version>${commons-io.version}</version>
         </dependency>
+        <dependency>
+            <groupId>cn.dev33</groupId>
+            <artifactId>sa-token-spring-boot-starter</artifactId>
+            <version>${sa-token.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>cn.dev33</groupId>
+            <artifactId>sa-token-oauth2</artifactId>
+            <version>${sa-token.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>cn.dev33</groupId>
+            <artifactId>sa-token-redis-jackson</artifactId>
+            <version>${sa-token.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-pool2</artifactId>
+        </dependency>
     </dependencies>
 
 
@@ -110,24 +142,6 @@
                     </execution>
                 </executions>
             </plugin>
-<!--            <plugin>-->
-<!--                <groupId>org.apache.maven.plugins</groupId>-->
-<!--                <artifactId>maven-compiler-plugin</artifactId>-->
-<!--                <configuration>-->
-<!--                    <annotationProcessorPaths>-->
-<!--                        <path>-->
-<!--                            <groupId>org.hibernate.orm</groupId>-->
-<!--                            <artifactId>hibernate-jpamodelgen</artifactId>-->
-<!--                            <version>6.5.0.CR1</version>-->
-<!--                        </path>-->
-<!--                        <path>-->
-<!--                            <groupId>com.cosium.spring.data</groupId>-->
-<!--                            <artifactId>spring-data-jpa-entity-graph-generator</artifactId>-->
-<!--                            <spring-boot.version>3.2.2</spring-boot.version>-->
-<!--                        </path>-->
-<!--                    </annotationProcessorPaths>-->
-<!--                </configuration>-->
-<!--            </plugin>-->
         </plugins>
     </build>
 

@@ -15,7 +15,7 @@ target/
 .idea/misc.xml
 .idea/jpa-buddy.xml
 .idea/encodings.xml
-
+logs/**
 ### Eclipse ###
 .apt_generated
 .classpath
@@ -48,3 +48,4 @@ Scaffolding.iml
 /.idea/jpa-buddy-datasource.xml
 /logs/scaffolding.2024-03-22.0.log
 /.idea/uiDesigner.xml
+/.idea/inspectionProfiles/Project_Default.xml
