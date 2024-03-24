@@ -6,6 +6,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -17,15 +19,19 @@ public class CustomErrorController {
 
     @GetMapping("/404")
     public ResponseEntity<byte[]> notFoundPage() throws Exception {
-        Path path = Paths.get(Objects.requireNonNull(getClass().getClassLoader().getResource("static/error/404.html")).toURI());
-        byte[] content = Files.readAllBytes(path);
-        return new ResponseEntity<>(content, HttpStatus.NOT_FOUND);
+        return getEntity("static/error/404.html", HttpStatus.NOT_FOUND);
     }
 
     @GetMapping("/500")
     public ResponseEntity<byte[]> internalServerErrorPage() throws Exception {
-        Path path = Paths.get(Objects.requireNonNull(getClass().getClassLoader().getResource("static/error/500.html")).toURI());
-        byte[] content = Files.readAllBytes(path);
-        return new ResponseEntity<>(content, HttpStatus.INTERNAL_SERVER_ERROR);
+        return getEntity("static/error/500.html", HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
+    private ResponseEntity<byte[]> getEntity(String name, HttpStatus internalServerError) throws URISyntaxException, IOException {
+        Path path = Paths.get(Objects.requireNonNull(getClass().getClassLoader().getResource(name)).toURI());
+        byte[] content = Files.readAllBytes(path);
+        return new ResponseEntity<>(content, internalServerError);
+    }
+
+
 }
