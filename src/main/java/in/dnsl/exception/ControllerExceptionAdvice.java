@@ -4,6 +4,8 @@ import in.dnsl.core.WrapMapper;
 import in.dnsl.core.Wrapper;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -35,7 +37,7 @@ public class ControllerExceptionAdvice {
     @ResponseBody
     public Wrapper<?> exceptionHandler(Exception ex, HttpServletRequest request){
         log.error("发生未知异常",ex);
-        return WrapMapper.error(ex.getMessage());
+        return WrapMapper.error("发生未知异常");
     }
 
 
@@ -54,4 +56,15 @@ public class ControllerExceptionAdvice {
         return "redirect:/error/404";
     }
 
+    @ExceptionHandler(HttpMediaTypeNotSupportedException.class)
+    public Wrapper<?> handleHttpMediaTypeNotSupportedException(HttpMediaTypeNotSupportedException ex) {
+        log.error("请求类型错误",ex);
+        return WrapMapper.error("请求类型错误");
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public Wrapper<?> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex) {
+        log.error("请求参数错误",ex);
+        return WrapMapper.error("请求参数错误");
+    }
 }

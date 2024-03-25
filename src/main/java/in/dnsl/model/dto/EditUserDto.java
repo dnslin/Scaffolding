@@ -6,7 +6,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 @Data
-public class EditUserDTO {
+public class EditUserDto {
 
     @NotBlank(message = "用户名不能为空")
     @Size(max = 128, message = "用户名长度最大为128个字符")

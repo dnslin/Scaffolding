@@ -4,8 +4,9 @@ import cn.dev33.satoken.stp.SaTokenInfo;
 import cn.dev33.satoken.stp.StpUtil;
 import in.dnsl.constant.Integer4Boolean;
 import in.dnsl.exception.AppException;
-import in.dnsl.model.dto.EditUserDTO;
-import in.dnsl.model.dto.LoginDTO;
+import in.dnsl.model.dto.EditUserDto;
+import in.dnsl.model.dto.LoginDto;
+import in.dnsl.model.dto.UserStatusDto;
 import in.dnsl.model.entity.User;
 import in.dnsl.model.vo.UserInfoVo;
 import in.dnsl.model.vo.UserVo;
@@ -58,10 +59,15 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(rollbackOn = Exception.class)
-    public UserInfoVo doLogin(LoginDTO loginDTO) {
+    public UserInfoVo doLogin(LoginDto loginDTO) {
         // 查询用户
-        User user = userRepository.findByUsername(loginDTO.getUsername())
-                .orElseThrow(() -> new AppException("用户不存在"));
+        User user = userRepository.findByUsernameAndEnabled(loginDTO.getUsername(), true)
+                .orElseThrow(() -> new AppException("用户不存在或者已被禁用"));
+        // 判断用户是否被禁用
+        if (!user.getEnabled()) {
+            log.error("用户被禁用: {}", loginDTO.getUsername());
+            throw new AppException("用户被禁用");
+        }
         // 校验密码
         if (!PasswordUtils.verifyUserPassword(loginDTO.getPassword(), user.getPassword(), user.getSalt())) {
             log.error("密码错误: {}", loginDTO.getUsername());
@@ -91,7 +97,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(rollbackOn = Exception.class)
-    public void updateUserInfo(EditUserDTO info) {
+    public void updateUserInfo(EditUserDto info) {
         User user = userRepository.findByUsername(info.getUsername())
                 .orElseThrow(() -> new AppException("用户不存在"));
         // 如果为空或者为"" 则不修改
@@ -111,10 +117,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(rollbackOn = Exception.class)
-    public void disableUser(String username,boolean disable) {
-        User user = userRepository.findByUsername(username)
+    public void disableUser(UserStatusDto userStatusDto) {
+        User user = userRepository.findByUsername(userStatusDto.getUsername())
                 .orElseThrow(() -> new AppException("用户不存在"));
-        user.setEnabled(disable);
+        user.setEnabled(userStatusDto.getDisable());
         User save = userRepository.save(user);
         log.info("用户禁用/启用成功: {}", save);
     }

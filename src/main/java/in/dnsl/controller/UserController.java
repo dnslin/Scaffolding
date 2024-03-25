@@ -5,8 +5,9 @@ import cn.dev33.satoken.annotation.SaIgnore;
 import cn.dev33.satoken.stp.StpUtil;
 import in.dnsl.core.WrapMapper;
 import in.dnsl.core.Wrapper;
-import in.dnsl.model.dto.EditUserDTO;
-import in.dnsl.model.dto.LoginDTO;
+import in.dnsl.model.dto.EditUserDto;
+import in.dnsl.model.dto.LoginDto;
+import in.dnsl.model.dto.UserStatusDto;
 import in.dnsl.model.vo.UserInfoVo;
 import in.dnsl.model.vo.UserVo;
 import in.dnsl.service.UserService;
@@ -55,7 +56,7 @@ public class UserController {
      */
     @SaIgnore
     @PostMapping("/login")
-    public Wrapper<UserInfoVo> doLogin(@Validated @RequestBody LoginDTO loginDTO, HttpServletRequest request) {
+    public Wrapper<UserInfoVo> doLogin(@Validated @RequestBody LoginDto loginDTO, HttpServletRequest request) {
         log.info("用户登录...");
         String ipAddress = IPUtils.getClientIp(request);
         log.info("用户IP地址: {}", ipAddress);
@@ -104,7 +105,7 @@ public class UserController {
      */
     @SaCheckLogin
     @PostMapping("/update")
-    public Wrapper<?> updateUserInfo(@Validated @RequestBody EditUserDTO info) {
+    public Wrapper<?> updateUserInfo(@Validated @RequestBody EditUserDto info) {
         log.info("用户{}修改用户信息...",info.getUsername());
         userService.updateUserInfo(info);
         return WrapMapper.ok();
@@ -138,9 +139,9 @@ public class UserController {
      */
     @SaCheckLogin
     @PostMapping("/disable")
-    public Wrapper<?> disableUser(String username,boolean disable) {
-        log.info("用户{}禁用/启用{}用户...",username,disable);
-        userService.disableUser(username,disable);
+    public Wrapper<?> disableUser(@RequestBody @Validated UserStatusDto userStatusDto) {
+        log.info("用户{}禁用/启用{}用户...",userStatusDto.getUsername(),userStatusDto.getDisable());
+        userService.disableUser(userStatusDto);
         return WrapMapper.ok();
     }
 
