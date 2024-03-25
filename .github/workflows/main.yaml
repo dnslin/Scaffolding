@@ -48,6 +48,9 @@ jobs:
           files: target/Scaffolding.jar
         env:
           GITHUB_REPOSITORY: dnslin/Scaffolding
+      - name: Get version
+        id: get_version
+        run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
       - name: 设置Docker USER 和 TOKEN
         uses: docker/login-action@v1
         with:
@@ -66,4 +69,4 @@ jobs:
             linux/amd64
             linux/arm64/v8
           push: true
-          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/scaffolding:${{ github.ref }}
+          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/scaffolding:${{ steps.get_version.outputs.VERSION }}
