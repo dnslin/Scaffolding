@@ -1,0 +1,8 @@
+version: '3.8'
+services:
+  scaffolding:
+    image: dnslin/scaffolding:v0.4.2
+    volumes:
+      - ./target:/app # 将本地的 target 目录映射到容器内的 /app 目录
+    ports:
+      - "2341:2341" # 将容器的 2341 端口映射到主机的 2341 端口

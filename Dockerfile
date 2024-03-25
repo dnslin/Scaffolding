@@ -5,4 +5,4 @@ RUN rm -f /etc/localtime \
 && echo "Asia/Shanghai" > /etc/timezone
 COPY target/Scaffolding.jar /app/app.jar
 
-ENTRYPOINT ["java", "-jar","-Dspring.profiles.active=test","app/app.jar"]
+ENTRYPOINT ["java", "-jar","-Dspring.profiles.active=prod","app/app.jar"]
