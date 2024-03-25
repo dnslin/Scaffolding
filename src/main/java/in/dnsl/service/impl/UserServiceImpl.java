@@ -6,6 +6,7 @@ import in.dnsl.constant.Integer4Boolean;
 import in.dnsl.exception.AppException;
 import in.dnsl.model.dto.EditUserDto;
 import in.dnsl.model.dto.LoginDto;
+import in.dnsl.model.dto.RestPassDto;
 import in.dnsl.model.dto.UserStatusDto;
 import in.dnsl.model.entity.User;
 import in.dnsl.model.vo.UserInfoVo;
@@ -126,15 +127,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void resetPassword(String username, String password, String oldPassword) {
-        User user = userRepository.findByUsername(username)
+    public void resetPassword(RestPassDto restPassDto) {
+        User user = userRepository.findByUsername(restPassDto.getUsername())
                 .orElseThrow(() -> new AppException("用户不存在"));
-        if (!PasswordUtils.verifyUserPassword(oldPassword, user.getPassword(), user.getSalt())) {
-            log.error("密码错误: {}", username);
+        if (!PasswordUtils.verifyUserPassword(restPassDto.getOldPassword(), user.getPassword(), user.getSalt())) {
+            log.error("密码错误: {}", restPassDto.getUsername());
             throw new AppException("密码错误");
         }
-        String salt = PasswordUtils.getSalt();
-        String securePassword = PasswordUtils.generateSecurePassword(password, salt);
+        String securePassword = PasswordUtils.generateSecurePassword(restPassDto.getPassword(), user.getSalt());
         user.setPassword(securePassword);
         User save = userRepository.save(user);
         log.info("用户密码重置成功: {}", save);

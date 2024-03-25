@@ -7,6 +7,7 @@ import in.dnsl.core.WrapMapper;
 import in.dnsl.core.Wrapper;
 import in.dnsl.model.dto.EditUserDto;
 import in.dnsl.model.dto.LoginDto;
+import in.dnsl.model.dto.RestPassDto;
 import in.dnsl.model.dto.UserStatusDto;
 import in.dnsl.model.vo.UserInfoVo;
 import in.dnsl.model.vo.UserVo;
@@ -157,9 +158,9 @@ public class UserController {
      */
     @SaCheckLogin
     @PostMapping("/reset")
-    public Wrapper<?> resetPassword(String username,String password,String oldPassword) {
-        log.info("用户{}重置密码...",username);
-        userService.resetPassword(username,password,oldPassword);
+    public Wrapper<?> resetPassword(@RequestBody @Validated RestPassDto restPassDto) {
+        log.info("用户{}重置密码...",restPassDto.getUsername());
+        userService.resetPassword(restPassDto);
         return WrapMapper.ok();
     }
 }

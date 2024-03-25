@@ -2,6 +2,7 @@ package in.dnsl.service;
 
 import in.dnsl.model.dto.EditUserDto;
 import in.dnsl.model.dto.LoginDto;
+import in.dnsl.model.dto.RestPassDto;
 import in.dnsl.model.dto.UserStatusDto;
 import in.dnsl.model.vo.UserInfoVo;
 import in.dnsl.model.vo.UserVo;
@@ -27,5 +28,5 @@ public interface UserService {
     void disableUser(UserStatusDto userStatusDto);
 
     // 重置密码
-    void resetPassword(String username, String password, String oldPassword);
+    void resetPassword(RestPassDto restPassDto);
 }
