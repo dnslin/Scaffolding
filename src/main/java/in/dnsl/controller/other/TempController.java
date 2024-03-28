@@ -19,8 +19,8 @@ public class TempController {
     @GetMapping("/temp")
     public String temp() {
         OkHttpUtils.setProxy(new Proxy(Proxy.Type.HTTP, new InetSocketAddress("150.230.121.194", 1080)));
-        File file = OkHttpUtils.getFile("https://w.wallhaven.cc/full/we/wallhaven-werowr.png", Path.of("C:\\Users\\dongshilin\\Pictures\\Screenshots"));
-        System.out.println(file.getName());
-        return "ok";
+        File file = OkHttpUtils.getFile("https://w.wallhaven.cc/full/we/wallhaven-werowr.png", new File("a.png"));
+        System.out.println("文件名称"+file.getName());
+        return file.getName();
     }
 }
