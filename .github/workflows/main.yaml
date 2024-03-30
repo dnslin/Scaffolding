@@ -9,7 +9,7 @@ on:
       - v1.*
       - v0.*
   pull_request:
-    branches: [ master ]
+    branches: [ deb ]
 permissions:
   contents: write
 jobs:
