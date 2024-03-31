@@ -9,16 +9,21 @@ import java.time.LocalDateTime;
 @Setter
 @RequiredArgsConstructor
 @Entity
+@Builder
+@AllArgsConstructor
 @Table(name = "tokens")
 public class Token {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "token_id")
-    private Integer tokenId;
+    private Long tokenId;
 
     @Column(name = "user_id", nullable = false)
-    private Integer userId;
+    private Long userId;
+
+    @Column(nullable = false)
+    private String name;
 
     @Column(nullable = false)
     private String token;
@@ -29,7 +34,4 @@ public class Token {
     @Column(name = "expiration_time")
     private LocalDateTime expirationTime;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", referencedColumnName = "id", insertable = false, updatable = false)
-    private User user;
 }
