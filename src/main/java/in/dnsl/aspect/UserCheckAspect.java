@@ -19,13 +19,13 @@ public class UserCheckAspect {
     private UserRepository repository;
 
 
-    @Before("@annotation(CheckUsername)")
+    @Before("@annotation(CheckUserName)")
     public void beforeAdvice(JoinPoint joinPoint) {
         Object[] args = joinPoint.getArgs();
         for (Object arg : args) {
             if (arg instanceof String username) {
                 boolean b = repository.existsByUsername(username);
-                if (!b) throw new AppException("用户不存在或者已被禁用")
+                if (!b) throw new AppException("用户不存在或者已被禁用");
             } else {
                 Field[] fields = arg.getClass().getDeclaredFields();
                 for (Field field : fields) {
@@ -35,7 +35,7 @@ public class UserCheckAspect {
                             Object value = field.get(arg);
                             if (value instanceof String username) {
                                 boolean b = repository.existsByUsername(username);
-                                if (!b) throw new AppException("用户不存在或者已被禁用")
+                                if (!b) throw new AppException("用户不存在或者已被禁用");
                             }
                         } catch (IllegalAccessException e) {
                             log.error("获取username失败", e);

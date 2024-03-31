@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class CheckSystemController {
 
     private final RedisUtils redisUtils;
-    @GetMapping("/redis-health")
+    @GetMapping("/api/redis-health")
     public Wrapper<?> checkRedisHealth() {
         try {
             redisUtils.set("redis-health-check", "OK");

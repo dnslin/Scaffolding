@@ -26,7 +26,7 @@ public class UserIdCheckAspect {
         for (Object arg : args) {
             if (arg instanceof Long id) {
                 boolean b = repository.existsById(id);
-                if (!b) throw new AppException("用户不存在或者已被禁用")
+                if (!b) throw new AppException("用户不存在或者已被禁用");
             } else {
                 Field[] fields = arg.getClass().getDeclaredFields();
                 for (Field field : fields) {
@@ -35,8 +35,8 @@ public class UserIdCheckAspect {
                             field.setAccessible(true);
                             Object value = field.get(arg);
                             if (value instanceof Long id) {
-                                boolean b = repository.existsById(id));
-                                if (!b) throw new AppException("用户不存在或者已被禁用")
+                                boolean b = repository.existsById(id);
+                                if (!b) throw new AppException("用户不存在或者已被禁用");
                             }
                         } catch (IllegalAccessException e) {
                             log.error("获取用户ID失败", e);
