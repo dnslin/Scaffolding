@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
+import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Field;
@@ -18,8 +19,10 @@ public class UserCheckAspect {
     @Resource
     private UserRepository repository;
 
+    @Pointcut("@annotation(in.dnsl.annotation.CheckUserName)")
+    public void CheckUserName() {}
 
-    @Before("@annotation(CheckUserName)")
+    @Before("CheckUserName()")
     public void beforeAdvice(JoinPoint joinPoint) {
         Object[] args = joinPoint.getArgs();
         for (Object arg : args) {
