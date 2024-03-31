@@ -20,3 +20,12 @@ CREATE TABLE roles
     name        VARCHAR(255) NOT NULL,
     description VARCHAR(255)
 );
+CREATE TABLE tokens
+(
+    token_id        INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id         INTEGER NOT NULL,
+    token           VARCHAR(255) NOT NULL,
+    creation_time   TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    expiration_time TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users (id)
+);
