@@ -14,14 +14,9 @@ import org.springframework.web.bind.annotation.RestController;
 public class InfoController {
     @RateLimiter(rules = {@RateLimitRule, @RateLimitRule(time = 10, count = 50)})
     @RateLimiter(rules = {@RateLimitRule(time = 1, count = 2)}, type = LimitType.IP)
-    @GetMapping("/health")
-    public String health() {
-        return "OK";
-    }
-
     @GetMapping("/version")
     public String version() {
-        return "1.0.0";
+        return "0.5";
     }
 
     @GetMapping("/author")
@@ -31,12 +26,6 @@ public class InfoController {
 
     @GetMapping("/description")
     public String description() {
-        return "This is a simple Spring Boot application.";
-    }
-
-    @GetMapping("/contact")
-    public String contact() {
-        return "";
-
+        return "这是一个个人使用的图床项目，用于存储图片并提供外链服务。";
     }
 }

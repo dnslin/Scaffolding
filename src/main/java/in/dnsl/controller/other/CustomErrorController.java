@@ -1,5 +1,8 @@
 package in.dnsl.controller.other;
 
+import in.dnsl.annotation.RateLimitRule;
+import in.dnsl.annotation.RateLimiter;
+import in.dnsl.enums.LimitType;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -18,11 +21,15 @@ import java.util.Objects;
 public class CustomErrorController {
 
     @GetMapping("/404")
+    @RateLimiter(rules = {@RateLimitRule, @RateLimitRule(time = 10, count = 50)})
+    @RateLimiter(rules = {@RateLimitRule(time = 1, count = 2)}, type = LimitType.IP)
     public ResponseEntity<byte[]> notFoundPage() throws Exception {
         return getEntity("static/error/404.html", HttpStatus.NOT_FOUND);
     }
 
     @GetMapping("/500")
+    @RateLimiter(rules = {@RateLimitRule, @RateLimitRule(time = 10, count = 50)})
+    @RateLimiter(rules = {@RateLimitRule(time = 1, count = 2)}, type = LimitType.IP)
     public ResponseEntity<byte[]> internalServerErrorPage() throws Exception {
         return getEntity("static/error/500.html", HttpStatus.INTERNAL_SERVER_ERROR);
     }

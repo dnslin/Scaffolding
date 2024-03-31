@@ -3,8 +3,11 @@ package in.dnsl.controller;
 import cn.dev33.satoken.annotation.SaCheckLogin;
 import cn.dev33.satoken.annotation.SaIgnore;
 import cn.dev33.satoken.stp.StpUtil;
+import in.dnsl.annotation.RateLimitRule;
+import in.dnsl.annotation.RateLimiter;
 import in.dnsl.core.WrapMapper;
 import in.dnsl.core.Wrapper;
+import in.dnsl.enums.LimitType;
 import in.dnsl.model.dto.EditUserDto;
 import in.dnsl.model.dto.LoginDto;
 import in.dnsl.model.dto.RestPassDto;
@@ -37,6 +40,8 @@ public class UserController {
      * @date: 2024/3/23 14:47
      */
     @SaIgnore
+    @RateLimiter(rules = {@RateLimitRule, @RateLimitRule(time = 10, count = 50)})
+    @RateLimiter(rules = {@RateLimitRule(time = 1, count = 2)}, type = LimitType.IP)
     @PostMapping("/create")
     public Wrapper<?> createUser(@Validated @RequestBody UserVo info, HttpServletRequest request) {
         log.info("创建用户...");
@@ -56,6 +61,8 @@ public class UserController {
      * @date: 2024/3/24 16:25
      */
     @SaIgnore
+    @RateLimiter(rules = {@RateLimitRule, @RateLimitRule(time = 10, count = 50)})
+    @RateLimiter(rules = {@RateLimitRule(time = 1, count = 2)}, type = LimitType.IP)
     @PostMapping("/login")
     public Wrapper<UserInfoVo> doLogin(@Validated @RequestBody LoginDto loginDTO, HttpServletRequest request) {
         log.info("用户登录...");
