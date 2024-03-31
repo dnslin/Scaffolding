@@ -22,12 +22,21 @@ CREATE TABLE roles
 );
 CREATE TABLE "tokens"
 (
-    token_id        integer
-        primary key,
+    token_id        integer primary key,
     creation_time   timestamp    not null,
     expiration_time timestamp,
     token           varchar(255) not null,
     user_id         integer      not null,
     name            varchar(255) not null
 );
-
+CREATE TABLE site_config
+(
+    id              INTEGER PRIMARY KEY AUTOINCREMENT,
+    siteName        TEXT NOT NULL,
+    logoUrl         TEXT,
+    faviconUrl      TEXT,
+    siteDescription TEXT,
+    copyright       TEXT,
+    contactEmail    TEXT,
+    announcement    TEXT -- 新增的公告字段
+);
