@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -66,5 +67,23 @@ public class ControllerExceptionAdvice {
     public Wrapper<?> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex) {
         log.error("请求参数错误",ex);
         return WrapMapper.error("请求参数错误");
+    }
+
+    @ExceptionHandler(NullPointerException.class)
+    public Wrapper<?> handleNullPointerException(NullPointerException ex) {
+        log.error("空指针异常",ex);
+        return WrapMapper.error("空指针异常");
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public Wrapper<?> handleIllegalArgumentException(IllegalArgumentException ex) {
+        log.error("非法参数异常",ex);
+        return WrapMapper.error("非法参数异常");
+    }
+
+    @ExceptionHandler(MissingServletRequestParameterException.class)
+    public Wrapper<?> handleMissingServletRequestParameterException(MissingServletRequestParameterException ex) {
+        log.error("缺少请求参数异常",ex);
+        return WrapMapper.error("缺少请求参数异常");
     }
 }
