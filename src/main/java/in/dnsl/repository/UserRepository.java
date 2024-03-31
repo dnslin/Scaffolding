@@ -15,6 +15,9 @@ public interface UserRepository extends EntityGraphJpaRepository<User, Long>{
     // 根据用户名以及状态查询用户
     Optional<User> findByUsernameAndEnabled(String username, Boolean disable);
 
+    // 根据ID以及状态查询用户
+    Optional<User> findByIdAndEnabled(Long id, Boolean disable);
+
     // 判断用户是否存在
     boolean existsByUsername(String username);
 
