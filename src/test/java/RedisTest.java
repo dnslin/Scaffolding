@@ -13,7 +13,7 @@ public class RedisTest {
 
     @Test
     public void testRedis() {
-        redisUtils.set("name", "DnsLin");
+//        redisUtils.set("name", "DnsLin");
         System.out.println(redisUtils.get("name"));
     }
 }
