@@ -41,6 +41,6 @@ public class PasswordUtils {
         // 生成输入密码的加密版本
         String newSecurePassword = generateSecurePassword(providedPassword, salt);
         // 比较加密后的输入密码与存储的加密密码
-        return newSecurePassword.equals(securedPassword);
+        return !newSecurePassword.equals(securedPassword);
     }
 }

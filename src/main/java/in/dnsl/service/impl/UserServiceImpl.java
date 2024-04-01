@@ -66,7 +66,7 @@ public class UserServiceImpl implements UserService {
             throw new AppException("用户被禁用");
         }
         // 校验密码
-        if (!PasswordUtils.verifyUserPassword(loginDTO.getPassword(), user.getPassword(), user.getSalt())) {
+        if (PasswordUtils.verifyUserPassword(loginDTO.getPassword(), user.getPassword(), user.getSalt())) {
             log.error("密码错误: {}", loginDTO.getUsername());
             throw new AppException("用户或者密码错误");
         }
@@ -126,7 +126,7 @@ public class UserServiceImpl implements UserService {
     public void resetPassword(RestPassDto restPassDto) {
         User user = userRepository.findByUsername(restPassDto.getUsername())
                 .orElseThrow(() -> new AppException("用户不存在"));
-        if (!PasswordUtils.verifyUserPassword(restPassDto.getOldPassword(), user.getPassword(), user.getSalt())) {
+        if (PasswordUtils.verifyUserPassword(restPassDto.getOldPassword(), user.getPassword(), user.getSalt())) {
             log.error("密码错误: {}", restPassDto.getUsername());
             throw new AppException("密码错误");
         }
