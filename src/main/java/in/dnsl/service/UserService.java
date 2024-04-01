@@ -1,16 +1,12 @@
 package in.dnsl.service;
 
-import in.dnsl.model.dto.EditUserDto;
-import in.dnsl.model.dto.LoginDto;
-import in.dnsl.model.dto.RestPassDto;
-import in.dnsl.model.dto.UserStatusDto;
+import in.dnsl.model.dto.*;
 import in.dnsl.model.vo.UserInfoVo;
-import in.dnsl.model.vo.UserVo;
 
 public interface UserService {
 
     // 创建用户
-    void createUser(UserVo info);
+    void createUser(UserDto info);
 
     // 登录
     UserInfoVo doLogin(LoginDto loginDTO);

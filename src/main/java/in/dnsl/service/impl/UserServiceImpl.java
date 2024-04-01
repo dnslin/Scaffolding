@@ -4,13 +4,9 @@ import cn.dev33.satoken.stp.SaTokenInfo;
 import cn.dev33.satoken.stp.StpUtil;
 import in.dnsl.constant.Integer4Boolean;
 import in.dnsl.exception.AppException;
-import in.dnsl.model.dto.EditUserDto;
-import in.dnsl.model.dto.LoginDto;
-import in.dnsl.model.dto.RestPassDto;
-import in.dnsl.model.dto.UserStatusDto;
+import in.dnsl.model.dto.*;
 import in.dnsl.model.entity.User;
 import in.dnsl.model.vo.UserInfoVo;
-import in.dnsl.model.vo.UserVo;
 import in.dnsl.repository.UserRepository;
 import in.dnsl.service.UserService;
 import in.dnsl.utils.PasswordUtils;
@@ -32,7 +28,7 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     @Override
-    public void createUser(UserVo info) {
+    public void createUser(UserDto info) {
         // 判断用户是否存在
         userRepository.findByUsername(info.getUsername()).ifPresent(user -> {
             log.error("用户已存在: {}", info.getUsername());

@@ -8,12 +8,8 @@ import in.dnsl.annotation.RateLimiter;
 import in.dnsl.core.WrapMapper;
 import in.dnsl.core.Wrapper;
 import in.dnsl.enums.LimitType;
-import in.dnsl.model.dto.EditUserDto;
-import in.dnsl.model.dto.LoginDto;
-import in.dnsl.model.dto.RestPassDto;
-import in.dnsl.model.dto.UserStatusDto;
+import in.dnsl.model.dto.*;
 import in.dnsl.model.vo.UserInfoVo;
-import in.dnsl.model.vo.UserVo;
 import in.dnsl.service.UserService;
 import in.dnsl.utils.IPUtils;
 import jakarta.servlet.http.HttpServletRequest;
@@ -43,7 +39,7 @@ public class UserController {
     @RateLimiter(rules = {@RateLimitRule, @RateLimitRule(time = 10, count = 50)})
     @RateLimiter(rules = {@RateLimitRule(time = 1, count = 2)}, type = LimitType.IP)
     @PostMapping("/create")
-    public Wrapper<?> createUser(@Validated @RequestBody UserVo info, HttpServletRequest request) {
+    public Wrapper<?> createUser(@Validated @RequestBody UserDto info, HttpServletRequest request) {
         log.info("创建用户...");
         String ipAddress = IPUtils.getClientIp(request);
         log.info("用户IP地址: {}", ipAddress);
