@@ -29,18 +29,17 @@ CREATE TABLE "tokens"
     user_id         integer      not null,
     name            varchar(255) not null
 );
-CREATE TABLE site_config
+CREATE TABLE IF NOT EXISTS SiteConfig
 (
-    id              INTEGER PRIMARY KEY AUTOINCREMENT,
-    siteName        TEXT NOT NULL,
-    logoUrl         TEXT,
-    faviconUrl      TEXT,
-    siteDescription TEXT,
-    copyright       TEXT,
-    contactEmail    TEXT,
-    announcement    TEXT -- 新增的公告字段
+    id               INTEGER PRIMARY KEY AUTOINCREMENT,
+    site_name        TEXT NOT NULL,
+    site_url         TEXT NOT NULL,
+    favicon_url      TEXT NOT NULL,
+    site_description TEXT NOT NULL,
+    site_keywords    TEXT NOT NULL,
+    contact_email    TEXT NOT NULL,
+    contact_qq       TEXT NOT NULL
 );
-
 CREATE TABLE IF NOT EXISTS images
 (
     id             INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -55,7 +54,7 @@ CREATE TABLE IF NOT EXISTS images
     size           INTEGER     NOT NULL, -- 图片大小
     info           TEXT,                 -- 图片信息
     tags           TEXT,                 -- 图片标签
-    visibility     INTEGER        NOT NULL, -- 是否私密图片 0:private 1:public ，private则需要密码访问
+    visibility     INTEGER     NOT NULL, -- 是否私密图片 0:private 1:public ，private则需要密码访问
     category       TEXT,                 -- 分类字段
     accessPassword TEXT                  -- 访问密码字段
 );
