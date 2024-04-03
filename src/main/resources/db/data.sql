@@ -4,7 +4,7 @@ VALUES
 
 
 
-INSERT INTO images (
+INSERT INTO image_config (
     allowed_extensions,
     naming_strategy,
     allow_format_conversion,
