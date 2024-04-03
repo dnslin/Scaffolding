@@ -64,3 +64,21 @@ CREATE INDEX idx_visibility ON images (visibility);
 CREATE INDEX idx_category ON images (category);
 CREATE INDEX idx_createDate ON images (createDate);
 CREATE INDEX idx_modifyDate ON images (modifyDate);
+
+
+
+CREATE TABLE IF NOT EXISTS image_config
+(
+    id                    INTEGER PRIMARY KEY AUTOINCREMENT,
+    allowed_extensions    TEXT    NOT NULL, -- 允许的扩展名，以逗号分隔的字符串
+    naming_strategy       TEXT    NOT NULL, -- 图片命名方式
+    allow_format_conversion BOOLEAN NOT NULL, -- 是否允许转换格式
+    max_file_size         INTEGER NOT NULL, -- 图片文件最大尺寸（字节）
+    min_file_size         INTEGER NOT NULL, -- 图片文件最小尺寸（字节）
+    max_upload_count      INTEGER NOT NULL, -- 一次最多上传多少张图片
+    max_upload_width      INTEGER NOT NULL, -- 图片最大上传宽度（像素）
+    min_upload_width      INTEGER NOT NULL, -- 图片最小上传宽度（像素）
+    max_upload_height     INTEGER NOT NULL, -- 图片最大上传高度（像素）
+    min_upload_height     INTEGER NOT NULL, -- 图片最小上传高度（像素）
+    enable_compression    BOOLEAN NOT NULL  -- 是否开启压缩
+);
