@@ -4,6 +4,7 @@ import cn.dev33.satoken.annotation.SaCheckLogin;
 import cn.dev33.satoken.annotation.SaIgnore;
 import in.dnsl.core.WrapMapper;
 import in.dnsl.core.Wrapper;
+import in.dnsl.model.dto.SiteConfigDto;
 import in.dnsl.model.entity.SiteConfig;
 import in.dnsl.service.SiteConfigService;
 import in.dnsl.utils.IPUtils;
@@ -24,11 +25,11 @@ public class SiteConfigController {
     // 获取网站的配置信息
     @SaIgnore
     @GetMapping("/getSiteConfig")
-    public Wrapper<SiteConfig> getSiteConfig(HttpServletRequest request) {
+    public Wrapper<SiteConfigDto> getSiteConfig(HttpServletRequest request) {
         String clientIp = IPUtils.getClientIp(request);
         log.info("获取网站的配置信息... 客户端IP地址: {}", clientIp);
-        SiteConfig siteConfig = service.getSiteConfig();
-        return WrapMapper.ok(siteConfig);
+        SiteConfigDto config = service.getSiteConfig();
+        return WrapMapper.ok(config);
     }
 
 
