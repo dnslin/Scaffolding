@@ -18,7 +18,7 @@ public class Image {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
-    @Column(name = "userId", nullable = false)
+    @Column(name = "user_id", nullable = false)
     private Integer userId;
 
     @Column(name = "domain", nullable = false)
@@ -31,17 +31,17 @@ public class Image {
     private String album;
 
     @Temporal(TemporalType.DATE)
-    @Column(name = "createDate", nullable = false)
+    @Column(name = "create_date", nullable = false)
     private Date createDate;
 
     @Temporal(TemporalType.DATE)
-    @Column(name = "modifyDate", nullable = false)
+    @Column(name = "modify_date", nullable = false)
     private Date modifyDate;
 
-    @Column(name = "fileName", nullable = false)
+    @Column(name = "file_name", nullable = false)
     private String fileName;
 
-    @Column(name = "encryptedKey", nullable = false, unique = true)
+    @Column(name = "encrypted_key", nullable = false, unique = true)
     private String encryptedKey;
 
     @Column(name = "size", nullable = false)
@@ -59,6 +59,6 @@ public class Image {
     @Column(name = "category")
     private String category;
 
-    @Column(name = "accessPassword")
+    @Column(name = "access_password")
     private String accessPassword;
 }
