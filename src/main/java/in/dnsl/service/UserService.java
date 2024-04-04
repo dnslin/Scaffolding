@@ -71,7 +71,7 @@ public class UserService {
         // 更新登录信息
         user.setLastLoginIp(loginDTO.getLastLoginIp());
         user.setLastLoginTime(LocalDateTime.now());
-        StpUtil.login(user.getId());
+        StpUtil.login(user.getId()+":"+user.getUsername());
         log.info("用户登录成功: {}", user.getNickname());
         User save = userRepository.save(user);
         UserInfoVo userInfoVo = new UserInfoVo();

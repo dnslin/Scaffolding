@@ -5,6 +5,7 @@ import in.dnsl.model.entity.User;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Optional;
 @Component
 public interface UserRepository extends EntityGraphJpaRepository<User, Long>{
@@ -23,4 +24,7 @@ public interface UserRepository extends EntityGraphJpaRepository<User, Long>{
 
     // 根据ID进行判断用户是否存在
     boolean existsById(@NotNull Long id);
+
+    // 查询所有的用户和ID
+    List<User> findAllByEnabled(Boolean enabled);
 }
