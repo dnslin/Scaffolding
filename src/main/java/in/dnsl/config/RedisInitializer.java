@@ -23,5 +23,6 @@ public class RedisInitializer implements CommandLineRunner {
             redisUtils.set(String.format(RedisKeyConstant.USER_INFO_KEY, user.getId()), user.getUsername());
             log.info("用户信息缓存成功: {}", user.getUsername());
         });
+        // TODO 初始化 黑名单 到 redis内 使用 set 结构
     }
 }
