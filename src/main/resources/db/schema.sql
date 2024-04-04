@@ -82,3 +82,21 @@ CREATE TABLE IF NOT EXISTS image_config
     min_upload_height     INTEGER NOT NULL, -- 图片最小上传高度（像素）
     enable_compression    BOOLEAN NOT NULL  -- 是否开启压缩
 );
+CREATE TABLE IF NOT EXISTS system_configurations
+(
+    id                      INTEGER PRIMARY KEY AUTOINCREMENT,
+    thumbnail_enabled       INTEGER DEFAULT 0 NOT NULL,  -- 缩略图开启
+    blacklist_enabled       TEXT,  -- 黑名单
+    login_upload_enabled    INTEGER DEFAULT 0 NOT NULL,  -- 开启登录上传
+    api_upload_enabled      INTEGER DEFAULT 0 NOT NULL,  -- 开启API上传
+    encryption_enabled      INTEGER DEFAULT 0 NOT NULL,  -- 开启加密
+    trash_bin_enabled       INTEGER DEFAULT 0 NOT NULL,  -- 开启回收站
+    delete_link_enabled     INTEGER DEFAULT 0 NOT NULL,  -- 开启删除链接
+    upload_log_enabled      INTEGER DEFAULT 0 NOT NULL,  -- 开启上传日志
+    login_log_enabled       INTEGER DEFAULT 0 NOT NULL,  -- 开启登录日志
+    timezone                TEXT    NOT NULL,            -- 时区配置
+    guest_upload_limit      TEXT    NOT NULL,            -- 游客上传限制（格式为IP:张数）
+    image_compression_enabled INTEGER DEFAULT 0 NOT NULL,-- 开启图片压缩
+    image_conversion_enabled INTEGER DEFAULT 0 NOT NULL, -- 开启图片转换
+    trash_bin_days          INTEGER DEFAULT 0 NOT NULL   -- 回收站存在天数
+);

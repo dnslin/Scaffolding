@@ -29,3 +29,35 @@ INSERT INTO image_config (
              100,           -- 最小上传高度100像素
              1              -- 开启压缩
          );
+
+INSERT INTO system_configurations (
+    thumbnail_enabled,
+    blacklist_enabled,
+    login_upload_enabled,
+    api_upload_enabled,
+    encryption_enabled,
+    trash_bin_enabled,
+    delete_link_enabled,
+    upload_log_enabled,
+    login_log_enabled,
+    timezone,
+    guest_upload_limit,
+    image_compression_enabled,
+    image_conversion_enabled,
+    trash_bin_days
+) VALUES (
+             1,  -- 缩略图开启
+             "127.0.0.1",  -- 黑名单
+             1,  -- 开启登录上传
+             1,  -- 开启API上传
+             1,  -- 开启加密
+             1,  -- 开启回收站
+             1,  -- 开启删除链接
+             1,  -- 开启上传日志
+             1,  -- 开启登录日志
+             'UTC',  -- 时区配置, 根据需要进行调整
+             '0:0',  -- 游客上传限制（这里的'0:0'表示没有限制，根据需要进行调整）
+             1,  -- 开启图片压缩
+             1,  -- 开启图片转换
+             30   -- 回收站存在天数
+         );
