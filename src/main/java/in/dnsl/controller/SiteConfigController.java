@@ -10,17 +10,18 @@ import in.dnsl.service.SiteConfigService;
 import in.dnsl.utils.IPUtils;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
 @CrossOrigin
+@RequiredArgsConstructor
 @RequestMapping("/api/token/siteConfig")
 public class SiteConfigController {
 
-    @Resource
-    private SiteConfigService service;
+    private final SiteConfigService service;
 
     // 获取网站的配置信息
     @SaIgnore

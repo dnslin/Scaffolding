@@ -1,5 +1,7 @@
 package in.dnsl.utils;
 
+
+
 public class UniqueIdGenerator {
     /**
      * 开始使用该算法的时间为: 2022-01-01 00:00:00

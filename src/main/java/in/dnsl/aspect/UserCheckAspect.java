@@ -3,6 +3,7 @@ package in.dnsl.aspect;
 import in.dnsl.exception.AppException;
 import in.dnsl.repository.UserRepository;
 import jakarta.annotation.Resource;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
@@ -14,10 +15,10 @@ import java.lang.reflect.Field;
 @Slf4j
 @Aspect
 @Component
+@RequiredArgsConstructor
 public class UserCheckAspect {
 
-    @Resource
-    private UserRepository repository;
+    private final UserRepository repository;
 
     @Pointcut("@annotation(in.dnsl.annotation.CheckUserName)")
     public void CheckUserName() {}

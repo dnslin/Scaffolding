@@ -42,7 +42,6 @@ public class UserController {
     public Wrapper<?> createUser(@Validated @RequestBody UserDto info, HttpServletRequest request) {
         log.info("创建用户...");
         String ipAddress = IPUtils.getClientIp(request);
-        log.info("用户IP地址: {}", ipAddress);
         info.setLastLoginIp(ipAddress);
         userService.createUser(info);
         return WrapMapper.ok();
@@ -63,7 +62,6 @@ public class UserController {
     public Wrapper<UserInfoVo> doLogin(@Validated @RequestBody LoginDto loginDTO, HttpServletRequest request) {
         log.info("用户登录...");
         String ipAddress = IPUtils.getClientIp(request);
-        log.info("用户IP地址: {}", ipAddress);
         loginDTO.setLastLoginIp(ipAddress);
         return WrapMapper.ok(userService.doLogin(loginDTO));
     }

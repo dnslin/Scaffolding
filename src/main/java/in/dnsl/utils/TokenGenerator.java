@@ -4,13 +4,18 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Base64;
+
+
 /**
  * 生成一个安全且不重复的Token
  * @author dnslin
  */
 public class TokenGenerator {
+
+
     private static final SecureRandom secureRandom = new SecureRandom(); // 线程安全
     private static final Base64.Encoder base64Encoder = Base64.getUrlEncoder(); // URL安全
+
 
     /**
      * 生成一个安全且不重复的Token

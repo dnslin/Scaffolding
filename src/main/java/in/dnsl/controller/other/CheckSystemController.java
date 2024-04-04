@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class CheckSystemController {
 
     private final RedisUtils redisUtils;
+
+
     @GetMapping("/api/redis-health")
     @RateLimiter(rules = {@RateLimitRule, @RateLimitRule(time = 10, count = 50)})
     @RateLimiter(rules = {@RateLimitRule(time = 1, count = 2)}, type = LimitType.IP)

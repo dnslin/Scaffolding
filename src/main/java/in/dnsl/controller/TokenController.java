@@ -6,7 +6,7 @@ import in.dnsl.core.Wrapper;
 import in.dnsl.model.dto.GenTokenDto;
 import in.dnsl.model.vo.TokenProVo;
 import in.dnsl.service.TokenService;
-import jakarta.annotation.Resource;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -16,11 +16,11 @@ import java.util.List;
 @Slf4j
 @RestController
 @CrossOrigin
+@RequiredArgsConstructor
 @RequestMapping("/api/token")
 public class TokenController {
 
-    @Resource
-    private TokenService tokenService;
+    private final TokenService tokenService;
 
     // 生成token
     @SaCheckLogin

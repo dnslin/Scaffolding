@@ -7,15 +7,16 @@ import in.dnsl.repository.SiteConfigRepository;
 import in.dnsl.utils.ReflectionUtils;
 import jakarta.annotation.Resource;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class SiteConfigService {
 
-    @Resource
-    private SiteConfigRepository repository;
+    private final SiteConfigRepository repository;
 
     public SiteConfigDto getSiteConfig() {
         log.info("获取网站的配置信息...");

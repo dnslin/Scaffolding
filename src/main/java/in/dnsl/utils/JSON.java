@@ -15,6 +15,7 @@ import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalTimeSerializer;
 import io.micrometer.common.util.StringUtils;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,15 +26,21 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 import java.util.List;
+
+/**
+ * JSON 工具类
+ */
+@NoArgsConstructor
 public abstract class JSON {
+
+
     private static final ObjectMapper mapper;
     private static final ObjectMapper withEmptyMapper;
+
+
     @Getter
     private static final SimpleModule dateModule;
     private static final Logger logger = LoggerFactory.getLogger(JSON.class);
-
-    private JSON() {
-    }
 
     static {
         //datetime parse

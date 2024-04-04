@@ -6,6 +6,10 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Base64;
+
+/**
+ * 密码工具类
+ */
 @Slf4j
 public class PasswordUtils {
 

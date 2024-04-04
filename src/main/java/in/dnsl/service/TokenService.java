@@ -11,8 +11,8 @@ import in.dnsl.repository.UserRepository;
 import in.dnsl.utils.JSON;
 import in.dnsl.utils.RedisUtils;
 import in.dnsl.utils.TokenGenerator;
-import jakarta.annotation.Resource;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -24,16 +24,14 @@ import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class TokenService {
 
-    @Resource
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
-    @Resource
-    private TokenRepository repository;
+    private final TokenRepository repository;
 
-    @Resource
-    private RedisUtils redisUtils;
+    private final RedisUtils redisUtils;
 
 
     @Transactional(rollbackOn = Exception.class)

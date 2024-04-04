@@ -3,9 +3,9 @@ package in.dnsl.config;
 import in.dnsl.constant.RedisKeyConstant;
 import in.dnsl.utils.IPUtils;
 import in.dnsl.utils.RedisUtils;
-import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
@@ -15,10 +15,10 @@ import java.util.Set;
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class BlacklistInterceptor implements HandlerInterceptor {
 
-    @Resource
-    private RedisUtils redisUtils;
+    private final RedisUtils redisUtils;
 
     @Override
     public boolean preHandle(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response, @NotNull Object handler) throws Exception {
