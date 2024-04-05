@@ -19,6 +19,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -40,10 +41,12 @@ public class OperationLogAspect {
         LogOperation logOperation = signature.getMethod().getAnnotation(LogOperation.class);
         ActionType actionType = logOperation.actionType();
         String description = logOperation.description();
+        // 获取请求的UA
+        String userAgent = ((ServletRequestAttributes) Objects.requireNonNull(RequestContextHolder.getRequestAttributes())).getRequest().getHeader("User-Agent");
         // 获取用户IP
         HttpServletRequest request = ((ServletRequestAttributes) Objects.requireNonNull(RequestContextHolder.getRequestAttributes())).getRequest();
         String clientIp = IPUtils.getClientIp(request);
-        // 获取当前用户 如果为空则为匿名用户
+        // 获取当前用户 如果为空则为匿名用户 0代表匿名用户
         Object loginIdAndName = StpUtil.getLoginIdDefaultNull();
         String idAndName = Optional.ofNullable(loginIdAndName)
                 .map(Object::toString)
@@ -55,8 +58,10 @@ public class OperationLogAspect {
         OperationLog build = OperationLog.builder()
                 .operationIp(clientIp)
                 .userName(username)
+                .operationTime(LocalDateTime.now())
                 .operationType(actionType.name())
                 .operationDetails(description)
+                .ua(userAgent)
                 .userId(id).build();
         OperationLog save = repository.save(build);
         log.info("操作日志记录成功：{}", save.getOperationDetails());
