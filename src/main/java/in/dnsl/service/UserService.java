@@ -3,10 +3,13 @@ package in.dnsl.service;
 import cn.dev33.satoken.stp.SaTokenInfo;
 import cn.dev33.satoken.stp.StpUtil;
 import in.dnsl.constant.Integer4Boolean;
+import in.dnsl.enums.ActionType;
 import in.dnsl.exception.AppException;
 import in.dnsl.model.dto.*;
+import in.dnsl.model.entity.OperationLog;
 import in.dnsl.model.entity.User;
 import in.dnsl.model.vo.UserInfoVo;
+import in.dnsl.repository.OperationLogRepository;
 import in.dnsl.repository.UserRepository;
 import in.dnsl.utils.PasswordUtils;
 import in.dnsl.utils.ReflectionUtils;
@@ -26,6 +29,9 @@ public class UserService {
 
 
     private final UserRepository userRepository;
+
+
+    private final OperationLogRepository logRepository;
 
     public void createUser(UserDto info) {
         // 判断用户是否存在
@@ -58,16 +64,21 @@ public class UserService {
         // 查询用户
         User user = userRepository.findByUsernameAndEnabled(loginDTO.getUsername(), true)
                 .orElseThrow(() -> new AppException("用户不存在或者已被禁用"));
-        // 判断用户是否被禁用
-        if (!user.getEnabled()) {
-            log.error("用户被禁用: {}", loginDTO.getUsername());
-            throw new AppException("用户被禁用");
-        }
         // 校验密码
         if (PasswordUtils.verifyUserPassword(loginDTO.getPassword(), user.getPassword(), user.getSalt())) {
-            log.error("密码错误: {}", loginDTO.getUsername());
+            log.error("密码错误-->: {}", loginDTO.getUsername());
             throw new AppException("用户或者密码错误");
         }
+        // 记录登录日志
+        logRepository.save(OperationLog.builder()
+                .operationIp(loginDTO.getLastLoginIp())
+                .userName(user.getUsername())
+                .operationTime(LocalDateTime.now())
+                .operationType(ActionType.LOGIN.name())
+                .operationDetails("用户登录")
+                .ua(loginDTO.getUA())
+                .userId(user.getId())
+                .build());
         // 更新登录信息
         user.setLastLoginIp(loginDTO.getLastLoginIp());
         user.setLastLoginTime(LocalDateTime.now());

@@ -3,10 +3,12 @@ package in.dnsl.controller;
 import cn.dev33.satoken.annotation.SaCheckLogin;
 import cn.dev33.satoken.annotation.SaIgnore;
 import cn.dev33.satoken.stp.StpUtil;
+import in.dnsl.annotation.LogOperation;
 import in.dnsl.annotation.RateLimitRule;
 import in.dnsl.annotation.RateLimiter;
 import in.dnsl.core.WrapMapper;
 import in.dnsl.core.Wrapper;
+import in.dnsl.enums.ActionType;
 import in.dnsl.enums.LimitType;
 import in.dnsl.model.dto.*;
 import in.dnsl.model.vo.UserInfoVo;
@@ -63,6 +65,7 @@ public class UserController {
         log.info("用户登录...");
         String ipAddress = IPUtils.getClientIp(request);
         loginDTO.setLastLoginIp(ipAddress);
+        loginDTO.setUA(request.getHeader("User-Agent"));
         return WrapMapper.ok(userService.doLogin(loginDTO));
     }
 
@@ -75,9 +78,10 @@ public class UserController {
      */
     @SaCheckLogin
     @GetMapping("/logout")
+    @LogOperation(description = "用户注销", actionType = ActionType.LOGOUT)
     public Wrapper<?> doLogout() {
         // 根据用户名注销
-        log.info("用户{}注销...",StpUtil.getLoginIdAsString());
+        log.info("用户{}注销...",StpUtil.getLoginIdDefaultNull());
         StpUtil.logout();
         return WrapMapper.ok();
     }
