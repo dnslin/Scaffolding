@@ -14,4 +14,6 @@ public class LoginDto {
 
     private String lastLoginIp;
 
+    private String UA;
+
 }

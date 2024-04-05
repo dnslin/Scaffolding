@@ -1,5 +1,6 @@
 package in.dnsl.exception;
 
+import cn.dev33.satoken.exception.SaTokenException;
 import in.dnsl.core.WrapMapper;
 import in.dnsl.core.Wrapper;
 import jakarta.servlet.http.HttpServletRequest;
@@ -36,9 +37,9 @@ public class ControllerExceptionAdvice {
      */
     @ExceptionHandler(Exception.class)
     @ResponseBody
-    public Wrapper<?> exceptionHandler(Exception ex, HttpServletRequest request){
+    public Wrapper<?> exceptionHandler(Exception ex){
         log.error("发生未知异常",ex);
-        return WrapMapper.error("发生未知异常");
+        return WrapMapper.error("发生未知异常"+ex.getMessage());
     }
 
 
@@ -57,33 +58,45 @@ public class ControllerExceptionAdvice {
         return "redirect:/error/404";
     }
 
+    @ResponseBody
     @ExceptionHandler(HttpMediaTypeNotSupportedException.class)
     public Wrapper<?> handleHttpMediaTypeNotSupportedException(HttpMediaTypeNotSupportedException ex) {
         log.error("请求类型错误",ex);
         return WrapMapper.error("请求类型错误");
     }
 
+    @ResponseBody
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public Wrapper<?> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex) {
         log.error("请求参数错误",ex);
         return WrapMapper.error("请求参数错误");
     }
 
+    @ResponseBody
     @ExceptionHandler(NullPointerException.class)
     public Wrapper<?> handleNullPointerException(NullPointerException ex) {
         log.error("空指针异常",ex);
         return WrapMapper.error("空指针异常");
     }
 
+    @ResponseBody
     @ExceptionHandler(IllegalArgumentException.class)
     public Wrapper<?> handleIllegalArgumentException(IllegalArgumentException ex) {
         log.error("非法参数异常",ex);
         return WrapMapper.error("非法参数异常");
     }
 
+    @ResponseBody
     @ExceptionHandler(MissingServletRequestParameterException.class)
     public Wrapper<?> handleMissingServletRequestParameterException(MissingServletRequestParameterException ex) {
         log.error("缺少请求参数异常",ex);
         return WrapMapper.error("缺少请求参数异常");
+    }
+
+    @ResponseBody
+    @ExceptionHandler(SaTokenException.class)
+    public Wrapper<?> handleSaTokenException(SaTokenException ex) {
+        log.error("未登录异常",ex);
+        return WrapMapper.error(ex.getMessage());
     }
 }
