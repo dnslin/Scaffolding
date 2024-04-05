@@ -1,7 +1,7 @@
 package in.dnsl.repository;
 
+import com.cosium.spring.data.jpa.entity.graph.repository.EntityGraphJpaRepository;
 import in.dnsl.model.entity.ImageConfig;
-import org.springframework.data.repository.Repository;
 
-public interface ImageConfigRepository extends Repository<ImageConfig, Long> {
+public interface ImageConfigRepository extends EntityGraphJpaRepository<ImageConfig, Long> {
 }
