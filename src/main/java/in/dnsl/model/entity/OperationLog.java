@@ -1,10 +1,7 @@
 package in.dnsl.model.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
@@ -13,15 +10,18 @@ import java.time.LocalDateTime;
 @ToString
 @RequiredArgsConstructor
 @Entity
+@Builder
 @Table(name = "operation_logs")
 public class OperationLog {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
-    private User user; // 操作用户
+    @Column(name = "user_id")
+    private Long userId; // 操作用户
+
+    @Column(name = "user_name", nullable = false)
+    private String userName; // 操作用户名
 
     @Column(name = "operation_time", nullable = false)
     private LocalDateTime operationTime; // 操作时间
@@ -32,12 +32,16 @@ public class OperationLog {
     @Column(name = "operation_ip", nullable = false, length = 255)
     private String operationIp; // 操作IP
 
-    @Column(nullable = false, length = 50)
-    private String status; // 操作结果状态，如成功、失败
-
     @Column(name = "operation_details", length = 1024)
     private String operationDetails; // 操作详情，可以是详细的操作描述或原因
 
-    @Column(length = 255)
-    private String reason; // 操作失败原因（如果有）
+    public OperationLog(Integer id, Long userId, String userName, LocalDateTime operationTime, String operationType, String operationIp, String operationDetails) {
+        this.id = id;
+        this.userId = userId;
+        this.userName = userName;
+        this.operationTime = operationTime;
+        this.operationType = operationType;
+        this.operationIp = operationIp;
+        this.operationDetails = operationDetails;
+    }
 }
