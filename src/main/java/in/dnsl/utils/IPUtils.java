@@ -28,7 +28,8 @@ public class IPUtils {
                 .map(request::getHeader)
                 .filter(ip -> ip != null && !ip.isEmpty() && !"unknown".equalsIgnoreCase(ip))
                 .findFirst();
-
+        // 如果 等于 0:0:0:0:0:0:0:1 返回 本地 127.0.0.1
+        if ("0:0:0:0:0:0:0:1".equals(clientIp.orElse("")) || clientIp.isEmpty()) return "127.0.0.1";
         return clientIp.orElseGet(request::getRemoteAddr);
     }
 }
