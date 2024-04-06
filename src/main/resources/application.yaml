@@ -62,6 +62,6 @@ sa-token:
   is-log: true
 
 server:
-  port: 2341
+  port: 12341
   tomcat:
     max-http-form-post-size: 60000000
