@@ -22,8 +22,8 @@ public class ImageConfig {
     @Column(name = "naming_strategy", nullable = false)
     private String namingStrategy;
 
-    @Column(name = "allow_format_conversion", nullable = false)
-    private Boolean allowFormatConversion;
+    @Column(name = "format_conversion_type", nullable = false)
+    private String formatConversionType;
 
     @Column(name = "max_file_size", nullable = false)
     private Integer maxFileSize;
@@ -45,7 +45,4 @@ public class ImageConfig {
 
     @Column(name = "min_upload_height", nullable = false)
     private Integer minUploadHeight;
-
-    @Column(name = "enable_compression", nullable = false)
-    private Boolean enableCompression;
 }
