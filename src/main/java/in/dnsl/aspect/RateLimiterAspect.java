@@ -1,5 +1,6 @@
 package in.dnsl.aspect;
 
+import cn.dev33.satoken.stp.StpUtil;
 import in.dnsl.annotation.RateLimiter;
 import in.dnsl.annotation.RateLimiters;
 import in.dnsl.enums.LimitType;
@@ -8,6 +9,7 @@ import in.dnsl.utils.IPUtils;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
@@ -114,6 +116,8 @@ class UserKeyGeneratorStrategy implements KeyGeneratorStrategy {
     public String generateKey(RateLimiter rateLimiter, String name) {
         // 实现获取用户ID的逻辑
         long userId = 1L; // 获取用户ID的逻辑
+        String string = StpUtil.getLoginIdDefaultNull().toString();
+        if (StringUtils.isNotBlank(string)) userId = Long.parseLong(string);
         return rateLimiter.key() + name + "_USER_" + userId;
     }
 }
