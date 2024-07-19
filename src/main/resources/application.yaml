@@ -20,10 +20,10 @@ spring:
     show-sql: true
   data:
     redis:
-      host: 10.0.0.182
-      port: 16379
+      host: 172.16.0.78
+      port: 6379
+      password: unionit123
       database: 0
-      password: dnslin-redis
       lettuce:
         pool:
           # 连接池最大连接数

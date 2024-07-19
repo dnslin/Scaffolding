@@ -53,8 +53,7 @@ public class UserService {
                 .salt(salt)
                 .nickname(info.getNickname())
                 .lastLoginIp(info.getLastLoginIp())
-                .lastLoginTime(LocalDateTime.now())
-                .build();
+                .lastLoginTime(LocalDateTime.now()).build();
         User save = userRepository.save(userInfo);
         log.info("用户创建成功: {}", save);
     }
@@ -82,7 +81,7 @@ public class UserService {
         // 更新登录信息
         user.setLastLoginIp(loginDTO.getLastLoginIp());
         user.setLastLoginTime(LocalDateTime.now());
-        StpUtil.login(user.getId()+":"+user.getUsername());
+        StpUtil.login(user.getId() + ":" + user.getUsername());
         log.info("用户登录成功: {}", user.getNickname());
         User save = userRepository.save(user);
         UserInfoVo userInfoVo = new UserInfoVo();
@@ -93,17 +92,16 @@ public class UserService {
     }
 
     public UserInfoVo getUserInfo(String username) {
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new AppException("用户不存在"));
+        User user = getUser(username);
         UserInfoVo userInfoVo = new UserInfoVo();
         BeanUtils.copyProperties(user, userInfoVo);
         return userInfoVo;
     }
 
+
     @Transactional(rollbackOn = Exception.class)
     public void updateUserInfo(EditUserDto info) {
-        User user = userRepository.findByUsername(info.getUsername())
-                .orElseThrow(() -> new AppException("用户不存在"));
+        User user = getUser(info.getUsername());
         // 如果为空或者为"" 则不修改
         ReflectionUtils.updateFieldsIfPresent(info, user);
         User save = userRepository.save(user);
@@ -112,24 +110,21 @@ public class UserService {
 
     @Transactional(rollbackOn = Exception.class)
     public void deleteUser(String username) {
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new AppException("用户不存在"));
+        User user = getUser(username);
         userRepository.delete(user);
         log.info("用户删除成功: {}", user);
     }
 
     @Transactional(rollbackOn = Exception.class)
     public void disableUser(UserStatusDto userStatusDto) {
-        User user = userRepository.findByUsername(userStatusDto.getUsername())
-                .orElseThrow(() -> new AppException("用户不存在"));
+        User user = getUser(userStatusDto.getUsername());
         user.setEnabled(userStatusDto.getDisable());
         User save = userRepository.save(user);
         log.info("用户禁用/启用成功: {}", save);
     }
 
     public void resetPassword(RestPassDto restPassDto) {
-        User user = userRepository.findByUsername(restPassDto.getUsername())
-                .orElseThrow(() -> new AppException("用户不存在"));
+        User user = getUser(restPassDto.getUsername());
         if (PasswordUtils.verifyUserPassword(restPassDto.getOldPassword(), user.getPassword(), user.getSalt())) {
             log.error("密码错误: {}", restPassDto.getUsername());
             throw new AppException("密码错误");
@@ -138,6 +133,11 @@ public class UserService {
         user.setPassword(securePassword);
         User save = userRepository.save(user);
         log.info("用户密码重置成功: {}", save);
+    }
+
+    private User getUser(String username) {
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new AppException("用户不存在"));
     }
 
 }
