@@ -1,5 +1,6 @@
 package in.dnsl.utils;
 
+import in.dnsl.exception.AppException;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Field;
@@ -28,7 +29,7 @@ public class ReflectionUtils {
                     .filter(value -> !value.toString().isEmpty())
                     .ifPresent(value -> updateTargetField(sourceField, value, target));
         } catch (IllegalAccessException e) {
-            log.error("无法访问字段: {}", sourceField.getName(), e);
+            throw new AppException("无法访问字段: " + sourceField.getName());
         }
     }
 
@@ -38,9 +39,9 @@ public class ReflectionUtils {
             targetField.setAccessible(true);
             targetField.set(target, value);
         } catch (NoSuchFieldException e) {
-            log.error("目标对象中不存在字段: {}", sourceField.getName());
+            throw new AppException("目标对象中不存在字段: " + sourceField.getName());
         } catch (IllegalAccessException e) {
-            log.error("无法设置目标字段值: {}", sourceField.getName(), e);
+            throw new AppException("无法设置目标字段值: " + sourceField.getName());
         }
     }
 }

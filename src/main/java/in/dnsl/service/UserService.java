@@ -21,6 +21,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -35,10 +36,7 @@ public class UserService {
 
     public void createUser(UserDto info) {
         // 判断用户是否存在
-        userRepository.findByUsername(info.getUsername()).ifPresent(user -> {
-            log.error("用户已存在: {}", info.getUsername());
-            throw new AppException("用户已存在");
-        });
+        checkAndGetUser(info.getUsername(), true);
         // 准备ID
         long uniqueId = UniqueIdGenerator.getInstance(Integer4Boolean.APP_HOST).genUniqueId();
         // 对密码进行二次加盐
@@ -61,8 +59,7 @@ public class UserService {
     @Transactional(rollbackOn = Exception.class)
     public UserInfoVo doLogin(LoginDto loginDTO) {
         // 查询用户
-        User user = userRepository.findByUsernameAndEnabled(loginDTO.getUsername(), true)
-                .orElseThrow(() -> new AppException("用户不存在或者已被禁用"));
+        User user = checkAndGetUser(loginDTO.getUsername(), false);
         // 校验密码
         if (PasswordUtils.verifyUserPassword(loginDTO.getPassword(), user.getPassword(), user.getSalt())) {
             log.error("密码错误-->: {}", loginDTO.getUsername());
@@ -92,7 +89,7 @@ public class UserService {
     }
 
     public UserInfoVo getUserInfo(String username) {
-        User user = getUser(username);
+        User user = checkAndGetUser(username,false);
         UserInfoVo userInfoVo = new UserInfoVo();
         BeanUtils.copyProperties(user, userInfoVo);
         return userInfoVo;
@@ -101,7 +98,7 @@ public class UserService {
 
     @Transactional(rollbackOn = Exception.class)
     public void updateUserInfo(EditUserDto info) {
-        User user = getUser(info.getUsername());
+        User user = checkAndGetUser(info.getUsername(),false);
         // 如果为空或者为"" 则不修改
         ReflectionUtils.updateFieldsIfPresent(info, user);
         User save = userRepository.save(user);
@@ -110,21 +107,21 @@ public class UserService {
 
     @Transactional(rollbackOn = Exception.class)
     public void deleteUser(String username) {
-        User user = getUser(username);
+        User user = checkAndGetUser(username,false);
         userRepository.delete(user);
         log.info("用户删除成功: {}", user);
     }
 
     @Transactional(rollbackOn = Exception.class)
     public void disableUser(UserStatusDto userStatusDto) {
-        User user = getUser(userStatusDto.getUsername());
+        User user = checkAndGetUser(userStatusDto.getUsername(),false);
         user.setEnabled(userStatusDto.getDisable());
         User save = userRepository.save(user);
         log.info("用户禁用/启用成功: {}", save);
     }
 
     public void resetPassword(RestPassDto restPassDto) {
-        User user = getUser(restPassDto.getUsername());
+        User user = checkAndGetUser(restPassDto.getUsername(),false);
         if (PasswordUtils.verifyUserPassword(restPassDto.getOldPassword(), user.getPassword(), user.getSalt())) {
             log.error("密码错误: {}", restPassDto.getUsername());
             throw new AppException("密码错误");
@@ -135,9 +132,13 @@ public class UserService {
         log.info("用户密码重置成功: {}", save);
     }
 
-    private User getUser(String username) {
-        return userRepository.findByUsername(username)
-                .orElseThrow(() -> new AppException("用户不存在"));
+    private User checkAndGetUser(String username, boolean checkIfExists) {
+        return userRepository.findByUsernameAndEnabled(username,true)
+                .or(() -> {
+                    if (checkIfExists) throw new AppException("用户已存在");
+                    return Optional.empty();
+                })
+                .orElseThrow(() -> new AppException("用户不存在,或者已被禁用"));
     }
 
 }

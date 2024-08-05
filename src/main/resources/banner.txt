@@ -1,11 +1,19 @@
+${AnsiColor.GREEN}
 Spring Boot Version: ${spring-boot.version}
 Spring Application Name: ${spring.application.name}
 
-   _____            __  __      _     _ _
-  / ____|          / _|/ _|    | |   | (_)
- | (___   ___ __ _| |_| |_ ___ | | __| |_ _ __   __ _
-  \___ \ / __/ _` |  _|  _/ _ \| |/ _` | | '_ \ / _` |
-  ____) | (_| (_| | | | || (_) | | (_| | | | | | (_| |
- |_____/ \___\__,_|_| |_| \___/|_|\__,_|_|_| |_|\__, |
-                                                 __/ |
-                                                |___/
+
+${AnsiColor.YELLOW}
+ _____ _      __  __
+|  __ (_)    |  \/  |
+| |__) |  ___| \  / | __ _ _ __   __ _  __ _  ___ _ __
+|  ___/ |/ __| |\/| |/ _` | '_ \ / _` |/ _` |/ _ \ '__|
+| |   | | (__| |  | | (_| | | | | (_| | (_| |  __/ |
+|_|   |_|\___|_|  |_|\__,_|_| |_|\__,_|\__, |\___|_|
+                                        __/ |
+                                       |___/             ---By DnsLin---
+
+${AnsiColor.CYAN}${AnsiStyle.BOLD}
+::  Java                 ::  (v${java.version})
+::  Spring Boot          ::  (v${spring-boot.version})
+${AnsiStyle.NORMAL}

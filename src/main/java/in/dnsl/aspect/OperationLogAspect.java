@@ -4,17 +4,16 @@ import cn.dev33.satoken.stp.StpUtil;
 import in.dnsl.annotation.LogOperation;
 import in.dnsl.enums.ActionType;
 import in.dnsl.model.entity.OperationLog;
-import in.dnsl.repository.OperationLogRepository;
+import in.dnsl.service.OperationLogService;
 import in.dnsl.utils.IPUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -22,14 +21,15 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
+@Slf4j
 @Aspect
 @Component
 @RequiredArgsConstructor
 public class OperationLogAspect {
 
-    private static final Logger log = LoggerFactory.getLogger(OperationLogAspect.class);
-    private final OperationLogRepository repository;
+    private final OperationLogService service;
 
     @Pointcut("@annotation(in.dnsl.annotation.LogOperation)")
     public void logOperationPointcut() {}
@@ -63,8 +63,8 @@ public class OperationLogAspect {
                 .operationDetails(description)
                 .ua(userAgent)
                 .userId(id).build();
-        OperationLog save = repository.save(build);
-        log.info("操作日志记录成功：{}", save.getOperationDetails());
+        CompletableFuture<OperationLog> save = service.saveLog(build);
+        log.info("操作日志记录成功：{}", save.get().getOperationDetails());
         // 继续执行原方法
         return joinPoint.proceed();
     }

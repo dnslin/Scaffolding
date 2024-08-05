@@ -79,7 +79,7 @@ CREATE TABLE IF NOT EXISTS image_config
     max_upload_width      INTEGER NOT NULL, -- 图片最大上传宽度（像素）
     min_upload_width      INTEGER NOT NULL, -- 图片最小上传宽度（像素）
     max_upload_height     INTEGER NOT NULL, -- 图片最大上传高度（像素）
-    min_upload_height     INTEGER NOT NULL, -- 图片最小上传高度（像素）
+    min_upload_height     INTEGER NOT NULL -- 图片最小上传高度（像素）
 );
 CREATE TABLE IF NOT EXISTS system_configurations
 (
