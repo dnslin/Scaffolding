@@ -18,19 +18,19 @@ public class User {
     @Id
     private Long id;
 
-    @Column(nullable = false, unique = true, length = 255)
+    @Column(nullable = false, unique = true, length = 30)
     private String username;
 
-    @Column(nullable = false, length = 255)
+    @Column(nullable = false, length = 100)
     private String password;
 
-    @Column(nullable = false, length = 255)
+    @Column(nullable = false, length = 30)
     private String email;
 
-    @Column(nullable = false, length = 255)
+    @Column(nullable = false, length = 20)
     private String nickname;
 
-    @Column(nullable = false, length = 255)
+    @Column(nullable = false, length = 100)
     private String avatar;
 
     @Column(nullable = false)
@@ -43,7 +43,7 @@ public class User {
     @Column(name = "last_login_time")
     private LocalDateTime lastLoginTime;
 
-    @Column(name = "last_login_ip", length = 255)
+    @Column(name = "last_login_ip", length = 20)
     private String lastLoginIp;
 
     @ManyToMany(fetch = FetchType.LAZY)

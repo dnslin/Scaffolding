@@ -32,13 +32,13 @@ public class OperationLog {
     @Column(name = "operation_type", nullable = false, length = 50)
     private String operationType; // 操作类型，如登录、登出、修改信息等
 
-    @Column(name = "operation_ip", nullable = false, length = 255)
+    @Column(name = "operation_ip", nullable = false, length = 30)
     private String operationIp; // 操作IP
 
     @Column(name = "operation_details", length = 1024)
     private String operationDetails; // 操作详情，可以是详细的操作描述或原因
 
-    @Column(name = "ua", length = 255)
+    @Column(name = "ua", length = 100)
     private String ua; // 创建时间
 
 

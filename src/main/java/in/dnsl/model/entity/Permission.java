@@ -22,7 +22,7 @@ public class Permission {
     @Column(nullable = false, unique = true)
     private String name;
 
-    @Column(length = 255)
+    @Column()
     private String description;
 
     @ManyToMany(mappedBy = "permissions", fetch = FetchType.LAZY)

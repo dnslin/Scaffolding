@@ -19,10 +19,10 @@ public class Role {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(nullable = false, unique = true, length = 255)
+    @Column(nullable = false, unique = true)
     private String name;
 
-    @Column(length = 255)
+    @Column()
     private String description;
 
     @ManyToMany(mappedBy = "roles", fetch = FetchType.LAZY)
