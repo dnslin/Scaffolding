@@ -1,6 +1,7 @@
 package in.dnsl.config;
 
 import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.cache.interceptor.KeyGenerator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
@@ -15,6 +16,7 @@ import org.springframework.data.redis.serializer.RedisSerializationContext;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 import java.time.Duration;
+import java.util.StringJoiner;
 
 @EnableCaching
 @Configuration
@@ -55,5 +57,18 @@ public class RedisConfig {
         return RedisCacheManager.builder(redisConnectionFactory)
                 .cacheDefaults(redisCacheConfiguration)
                 .build();
+    }
+
+    @Bean("customKeyGenerator")
+    public KeyGenerator keyGenerator() {
+        return (target, method, params) -> {
+            // 自定义键生成逻辑
+            StringJoiner joiner = new StringJoiner(":", method.getDeclaringClass().getSimpleName(), "");
+            joiner.add(method.getName());
+            for (Object param : params) {
+                joiner.add(String.valueOf(param));
+            }
+            return joiner.toString();
+        };
     }
 }

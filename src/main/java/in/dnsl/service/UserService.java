@@ -11,13 +11,16 @@ import in.dnsl.model.entity.User;
 import in.dnsl.model.vo.UserInfoVo;
 import in.dnsl.repository.OperationLogRepository;
 import in.dnsl.repository.UserRepository;
+import in.dnsl.utils.GenericBeanUtils;
 import in.dnsl.utils.PasswordUtils;
 import in.dnsl.utils.ReflectionUtils;
 import in.dnsl.utils.UniqueIdGenerator;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.BeanUtils;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -81,31 +84,33 @@ public class UserService {
         StpUtil.login(user.getId() + ":" + user.getUsername());
         log.info("用户登录成功: {}", user.getNickname());
         User save = userRepository.save(user);
-        UserInfoVo userInfoVo = new UserInfoVo();
-        BeanUtils.copyProperties(save, userInfoVo);
+        UserInfoVo userInfoVo = GenericBeanUtils.copyProperties(save, UserInfoVo.class);
         SaTokenInfo tokenInfo = StpUtil.getTokenInfo();
         userInfoVo.setTokenInfo(tokenInfo);
         return userInfoVo;
     }
 
+    @Cacheable(value = "PicManger:User:userInfo", key = "#username")
     public UserInfoVo getUserInfo(String username) {
+        log.info("查看用户信息-数据量: {}", username);
         User user = checkAndGetUser(username,false);
-        UserInfoVo userInfoVo = new UserInfoVo();
-        BeanUtils.copyProperties(user, userInfoVo);
-        return userInfoVo;
+        return GenericBeanUtils.copyProperties(user, UserInfoVo.class);
     }
 
 
     @Transactional(rollbackOn = Exception.class)
-    public void updateUserInfo(EditUserDto info) {
+    @CachePut(value = "PicManger:User:userInfo", key = "#info.username")
+    public UserInfoVo updateUserInfo(EditUserDto info) {
         User user = checkAndGetUser(info.getUsername(),false);
         // 如果为空或者为"" 则不修改
         ReflectionUtils.updateFieldsIfPresent(info, user);
         User save = userRepository.save(user);
         log.info("用户信息修改成功: {}", save);
+        return GenericBeanUtils.copyProperties(save, UserInfoVo.class);
     }
 
     @Transactional(rollbackOn = Exception.class)
+    @CacheEvict(value = "PicManager:User:userInfo", key = "#username")
     public void deleteUser(String username) {
         User user = checkAndGetUser(username,false);
         userRepository.delete(user);
@@ -113,6 +118,7 @@ public class UserService {
     }
 
     @Transactional(rollbackOn = Exception.class)
+    @CacheEvict(value = "PicManager:User:userInfo", key = "#userStatusDto.username")
     public void disableUser(UserStatusDto userStatusDto) {
         User user = checkAndGetUser(userStatusDto.getUsername(),false);
         user.setEnabled(userStatusDto.getDisable());

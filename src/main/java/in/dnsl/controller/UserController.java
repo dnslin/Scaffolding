@@ -52,7 +52,7 @@ public class UserController {
     /**
      * @Title: doLogin
      * @Description: 登录
-     * @param:   loginDTO
+     * @param: loginDTO
      * @return: Wrapper<?>
      * @author: DnsLin
      * @date: 2024/3/24 16:25
@@ -81,7 +81,7 @@ public class UserController {
     @LogOperation(description = "用户注销", actionType = ActionType.LOGOUT)
     public Wrapper<?> doLogout() {
         // 根据用户名注销
-        log.info("用户{}注销...",StpUtil.getLoginIdDefaultNull());
+        log.info("用户{}注销...", StpUtil.getLoginIdDefaultNull());
         StpUtil.logout();
         return WrapMapper.ok();
     }
@@ -89,7 +89,7 @@ public class UserController {
     /**
      * @Title: getUserInfo
      * @Description: 查看用户信息
-     * @param:   username
+     * @param: username
      * @return: UserInfoVo
      * @author: DnsLin
      * @date: 2024/3/24 16:26
@@ -97,7 +97,7 @@ public class UserController {
     @SaCheckLogin
     @GetMapping("/info")
     public Wrapper<UserInfoVo> getUserInfo(String username) {
-        log.info("{} 查看用户信息...",username);
+        log.info("{} 查看用户信息...", username);
         return WrapMapper.ok(userService.getUserInfo(username));
     }
 
@@ -105,23 +105,22 @@ public class UserController {
     /**
      * @Title: updateUserInfo
      * @Description: 修改用户信息
-     * @param:   UserVo
+     * @param: UserVo
      * @return: WrapMapper
      * @date: 2024/3/24 16:26
      */
     @SaCheckLogin
     @PostMapping("/update")
-    public Wrapper<?> updateUserInfo(@Validated @RequestBody EditUserDto info) {
-        log.info("用户{}修改用户信息...",info.getUsername());
-        userService.updateUserInfo(info);
-        return WrapMapper.ok();
+    public Wrapper<UserInfoVo> updateUserInfo(@Validated @RequestBody EditUserDto info) {
+        log.info("用户{}修改用户信息...", info.getUsername());
+        return WrapMapper.ok(userService.updateUserInfo(info));
     }
 
 
     /**
      * @Title: deleteUser
      * @Description: 删除用户
-     * @param:  username
+     * @param: username
      * @return: Wrapper
      * @author: DnsLin
      * @date: 2024/3/24 16:26
@@ -129,7 +128,7 @@ public class UserController {
     @SaCheckLogin
     @PostMapping("/delete")
     public Wrapper<?> deleteUser(String username) {
-        log.info("用户{}删除用户...",username);
+        log.info("用户{}删除用户...", username);
         userService.deleteUser(username);
         return WrapMapper.ok();
     }
@@ -137,8 +136,8 @@ public class UserController {
     /**
      * @Title: disableUser
      * @Description: 禁用用户/启用用户
-     * @param:  username
-     * @param:  disable
+     * @param: username
+     * @param: disable
      * @return: WrapMapper
      * @author: DnsLin
      * @date: 2024/3/24 16:26
@@ -146,7 +145,7 @@ public class UserController {
     @SaCheckLogin
     @PostMapping("/disable")
     public Wrapper<?> disableUser(@RequestBody @Validated UserStatusDto userStatusDto) {
-        log.info("用户{}禁用/启用{}用户...",userStatusDto.getUsername(),userStatusDto.getDisable());
+        log.info("用户{}禁用/启用{}用户...", userStatusDto.getUsername(), userStatusDto.getDisable());
         userService.disableUser(userStatusDto);
         return WrapMapper.ok();
     }
@@ -154,9 +153,9 @@ public class UserController {
     /**
      * @Title: resetPassword
      * @Description: 重置密码
-     * @param:   username
-     * @param:   password
-     * @param:   oldPassword
+     * @param: username
+     * @param: password
+     * @param: oldPassword
      * @return: Wrapper
      * @author: DnsLin
      * @date: 2024/3/24 16:27
@@ -164,7 +163,7 @@ public class UserController {
     @SaCheckLogin
     @PostMapping("/reset")
     public Wrapper<?> resetPassword(@RequestBody @Validated RestPassDto restPassDto) {
-        log.info("用户{}重置密码...",restPassDto.getUsername());
+        log.info("用户{}重置密码...", restPassDto.getUsername());
         userService.resetPassword(restPassDto);
         return WrapMapper.ok();
     }
