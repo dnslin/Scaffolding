@@ -61,3 +61,8 @@ INSERT INTO system_configurations (
              1,  -- 开启图片转换
              30   -- 回收站存在天数
          );
+
+
+
+INSERT INTO roles (name, description) VALUES ('ROLE_ADMIN', 'Administrator role');
+INSERT INTO roles (name, description) VALUES ('ROLE_USER', 'User role');

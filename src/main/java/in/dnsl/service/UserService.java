@@ -7,6 +7,7 @@ import in.dnsl.enums.ActionType;
 import in.dnsl.exception.AppException;
 import in.dnsl.model.dto.*;
 import in.dnsl.model.entity.OperationLog;
+import in.dnsl.model.entity.Role;
 import in.dnsl.model.entity.User;
 import in.dnsl.model.vo.UserInfoVo;
 import in.dnsl.repository.OperationLogRepository;
@@ -24,7 +25,9 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.Optional;
+import java.util.Set;
 
 @Slf4j
 @Service
@@ -137,6 +140,14 @@ public class UserService {
         User save = userRepository.save(user);
         log.info("用户密码重置成功: {}", save);
     }
+
+    public Set<Role> getRolesByUserId(Long userId) {
+        return userRepository.findByIdAndEnabled(userId,false)
+                .map(User::getRoles)
+                .orElse(Collections.emptySet());
+    }
+
+
 
     private User checkAndGetUser(String username, boolean checkIfExists) {
         return userRepository.findByUsernameAndEnabled(username,true)

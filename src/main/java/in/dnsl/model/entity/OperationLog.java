@@ -8,18 +8,16 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @ToString
-@RequiredArgsConstructor
 @Entity
 @Builder
+@AllArgsConstructor
+@RequiredArgsConstructor
 @Table(name = "operation_logs")
 public class OperationLog {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    // @ManyToOne
-    // @JoinColumn(name = "user_id", referencedColumnName = "id")
-    // private User user;
     @Column(name = "user_id")
     private Long userId; // 操作用户
 
@@ -41,15 +39,4 @@ public class OperationLog {
     @Column(name = "ua", length = 100)
     private String ua; // 创建时间
 
-
-    public OperationLog(Integer id, Long userId, String userName, LocalDateTime operationTime, String operationType, String operationIp, String operationDetails, String ua) {
-        this.id = id;
-        this.userId = userId;
-        this.userName = userName;
-        this.operationTime = operationTime;
-        this.operationType = operationType;
-        this.operationIp = operationIp;
-        this.operationDetails = operationDetails;
-        this.ua = ua;
-    }
 }
