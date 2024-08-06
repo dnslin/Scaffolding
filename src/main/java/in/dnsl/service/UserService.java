@@ -90,7 +90,7 @@ public class UserService {
         return userInfoVo;
     }
 
-    @Cacheable(value = "PicManger:User:userInfo", key = "#username")
+    @Cacheable(value = "PicManager:User:cache:userInfo", key = "#username")
     public UserInfoVo getUserInfo(String username) {
         log.info("查看用户信息-数据量: {}", username);
         User user = checkAndGetUser(username,false);
@@ -99,7 +99,7 @@ public class UserService {
 
 
     @Transactional(rollbackOn = Exception.class)
-    @CachePut(value = "PicManger:User:userInfo", key = "#info.username")
+    @CachePut(value = "PicManager:User:cache:userInfo", key = "#info.username")
     public UserInfoVo updateUserInfo(EditUserDto info) {
         User user = checkAndGetUser(info.getUsername(),false);
         // 如果为空或者为"" 则不修改
@@ -110,7 +110,7 @@ public class UserService {
     }
 
     @Transactional(rollbackOn = Exception.class)
-    @CacheEvict(value = "PicManager:User:userInfo", key = "#username")
+    @CacheEvict(value = "PicManager:User:cache:userInfo", key = "#username")
     public void deleteUser(String username) {
         User user = checkAndGetUser(username,false);
         userRepository.delete(user);
@@ -118,7 +118,7 @@ public class UserService {
     }
 
     @Transactional(rollbackOn = Exception.class)
-    @CacheEvict(value = "PicManager:User:userInfo", key = "#userStatusDto.username")
+    @CacheEvict(value = "PicManager:User:cache:userInfo", key = "#userStatusDto.username")
     public void disableUser(UserStatusDto userStatusDto) {
         User user = checkAndGetUser(userStatusDto.getUsername(),false);
         user.setEnabled(userStatusDto.getDisable());

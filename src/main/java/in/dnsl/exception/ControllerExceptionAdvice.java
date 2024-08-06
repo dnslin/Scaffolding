@@ -39,7 +39,7 @@ public class ControllerExceptionAdvice {
     @ResponseBody
     public Wrapper<?> exceptionHandler(Exception ex){
         log.error("发生未知异常",ex);
-        return WrapMapper.error("发生未知异常"+ex.getMessage());
+        return WrapMapper.error("发生未知异常");
     }
 
 

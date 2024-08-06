@@ -26,10 +26,10 @@ public class SiteConfigController {
 
     // 获取网站的配置信息
     @SaIgnore
-    @GetMapping("/getSiteConfig")
+    @GetMapping("/config")
     public Wrapper<SiteConfigDto> getSiteConfig(HttpServletRequest request) {
         String clientIp = IPUtils.getClientIp(request);
-        log.info("获取网站的配置信息... 客户端IP地址: {}", clientIp);
+        log.info("获取网站的配置信息---客户端IP地址: {}", clientIp);
         SiteConfigDto config = service.getSiteConfig();
         return WrapMapper.ok(config);
     }
@@ -37,11 +37,10 @@ public class SiteConfigController {
 
     // 更新网站的配置信息
     @SaCheckLogin
-    @GetMapping("/updateSiteConfig")
+    @PostMapping("/update")
     @LogOperation(description = "更新网站的配置信息", actionType = ActionType.MODIFY)
-    public Wrapper<?> updateSiteConfig(@RequestBody SiteConfig siteConfig) {
-        log.info("更新网站的配置信息...");
-        service.updateSiteConfig(siteConfig);
-        return WrapMapper.ok();
+    public Wrapper<SiteConfigDto> updateSiteConfig(@RequestBody SiteConfig siteConfig) {
+        SiteConfigDto siteConfigDto = service.updateSiteConfig(siteConfig);
+        return WrapMapper.ok(siteConfigDto);
     }
 }

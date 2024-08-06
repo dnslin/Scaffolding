@@ -14,6 +14,7 @@ import in.dnsl.utils.TokenGenerator;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -35,6 +36,7 @@ public class TokenService {
 
 
     @Transactional(rollbackOn = Exception.class)
+    @Cacheable(value = "PicManager:Token:cache:token" ,key = "#dto.userId")
     public TokenProVo generateToken(GenTokenDto dto) {
         User user = userRepository.findByIdAndEnabled(dto.getUserId(), true)
                 .orElseThrow(() -> new AppException("用户不存在或禁用"));
@@ -80,6 +82,7 @@ public class TokenService {
     }
 
     @Transactional(rollbackOn = Exception.class)
+    @Cacheable(value = "PicManager:Token:cache:list" ,key = "#userId")
     public void deleteToken(Long userId, String token) {
         Token tokenEntity = repository.findByUserIdAndToken(userId, token)
                 .orElseThrow(() -> new AppException("token不存在"));
@@ -106,6 +109,7 @@ public class TokenService {
         });
     }
 
+    @Cacheable(value = "PicManager:Token:cache:token-list" ,key = "#userId")
     public List<TokenProVo> getTokenList(Long userId) {
         boolean userCheck = userRepository.existsById(userId);
         if (!userCheck) throw new AppException("用户不存在或者被禁用");
