@@ -10,10 +10,10 @@ import java.util.Set;
 @Getter
 @Setter
 @Builder
-@RequiredArgsConstructor
 @Entity
 @Table(name = "users")
 @AllArgsConstructor
+@RequiredArgsConstructor
 public class User {
     @Id
     private Long id;

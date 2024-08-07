@@ -4,12 +4,14 @@ package in.dnsl.model.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-@AllArgsConstructor
-@NoArgsConstructor
+
 @Getter
 @Setter
 @Builder
 @Entity
+@AllArgsConstructor
+@NoArgsConstructor
+@RequiredArgsConstructor
 @Table(name = "system_configurations")
 public class SystemConfiguration {
 

@@ -7,10 +7,10 @@ import java.time.LocalDateTime;
 
 @Getter
 @Setter
-@RequiredArgsConstructor
 @Entity
 @Builder
 @AllArgsConstructor
+@RequiredArgsConstructor
 @Table(name = "tokens")
 public class Token {
 

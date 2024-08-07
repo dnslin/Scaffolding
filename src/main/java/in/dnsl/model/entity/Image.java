@@ -6,10 +6,10 @@ import lombok.*;
 import java.util.Date;
 
 @Entity
-@Table(name = "images")
 @Getter
 @Setter
 @Builder
+@Table(name = "images")
 @NoArgsConstructor
 @AllArgsConstructor
 public class Image {

@@ -6,10 +6,10 @@ import lombok.*;
 @Getter
 @Setter
 @Entity
-@NoArgsConstructor
-@AllArgsConstructor
 @Builder
 @Table(name = "site_config")
+@NoArgsConstructor
+@AllArgsConstructor
 public class SiteConfig {
 
     @Id

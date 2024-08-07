@@ -4,10 +4,10 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "image_config")
 @Getter
 @Setter
 @Builder
+@Table(name = "image_config")
 @NoArgsConstructor
 @AllArgsConstructor
 public class ImageConfig {

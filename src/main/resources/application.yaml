@@ -11,7 +11,8 @@ spring:
       idleTimeout: 30000
       maxLifetime: 2000000
       connectionTimeout: 30000
-
+  application:
+    name: Pic-Manager
   jpa:
     database-platform: org.hibernate.community.dialect.SQLiteDialect
     open-in-view: true
@@ -34,11 +35,6 @@ spring:
           max-idle: 10
           # 连接池中的最小空闲连接
           min-idle: 0
-  devtools:
-    restart:
-      enabled: true
-      additional-paths: src/main/java
-      exclude: resources/**
 logging:
   level:
     org.springframework.web: DEBUG
