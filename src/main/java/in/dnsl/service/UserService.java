@@ -11,6 +11,7 @@ import in.dnsl.model.entity.Role;
 import in.dnsl.model.entity.User;
 import in.dnsl.model.vo.UserInfoVo;
 import in.dnsl.repository.OperationLogRepository;
+import in.dnsl.repository.RoleRepository;
 import in.dnsl.repository.UserRepository;
 import in.dnsl.utils.GenericBeanUtils;
 import in.dnsl.utils.PasswordUtils;
@@ -26,8 +27,10 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -39,6 +42,9 @@ public class UserService {
 
 
     private final OperationLogRepository logRepository;
+
+
+    private final RoleRepository roleRepository;
 
     public void createUser(UserDto info) {
         // 判断用户是否存在
@@ -147,8 +153,26 @@ public class UserService {
                 .orElse(Collections.emptySet());
     }
 
+    // 更新用户角色
+    @Transactional(rollbackOn = Exception.class)
+    public List<String> updateUserRoles(UserRoleDto userRoleDto) {
+        User user = checkAndGetUser(userRoleDto.getUsername(), false);
+        Set<Role> newRoles = userRoleDto.getRoles().stream()
+                .map(roleName -> roleRepository.findByName(roleName)
+                        .orElseThrow(() -> new AppException("角色不存在: " + roleName)))
+                .collect(Collectors.toSet());
+        // 清除用户当前的所有角色，然后设置新的角色集合
+        user.getRoles().clear();
+        user.getRoles().addAll(newRoles);
+        User save = userRepository.save(user);
+        // 返回用户的角色名称
+        return save.getRoles().stream()
+                .map(Role::getName)
+                .toList();
+    }
 
 
+    // 检查用户是否存在 不存在则抛出异常
     private User checkAndGetUser(String username, boolean checkIfExists) {
         return userRepository.findByUsernameAndEnabled(username,true)
                 .or(() -> {

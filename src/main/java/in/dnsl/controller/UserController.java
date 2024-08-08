@@ -1,6 +1,7 @@
 package in.dnsl.controller;
 
 import cn.dev33.satoken.annotation.SaCheckLogin;
+import cn.dev33.satoken.annotation.SaCheckRole;
 import cn.dev33.satoken.annotation.SaIgnore;
 import cn.dev33.satoken.stp.StpUtil;
 import in.dnsl.annotation.LogOperation;
@@ -19,6 +20,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Slf4j
 @CrossOrigin
@@ -166,5 +169,15 @@ public class UserController {
         log.info("用户{}重置密码...", restPassDto.getUsername());
         userService.resetPassword(restPassDto);
         return WrapMapper.ok();
+    }
+
+    @SaCheckLogin
+    @PostMapping("/assign")
+    @SaCheckRole("admin")
+    @LogOperation(description = "更新角色", actionType = ActionType.MODIFY)
+    public Wrapper<List<String>> addRole(@RequestBody @Validated UserRoleDto userRoleDto) {
+        // 此接口 仅超级管理员可调用
+        log.info("管理员为用户{}分配角色", userRoleDto.getUsername());
+        return WrapMapper.ok(userService.updateUserRoles(userRoleDto));
     }
 }
