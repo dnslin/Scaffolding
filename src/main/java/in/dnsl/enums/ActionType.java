@@ -5,7 +5,8 @@ public enum ActionType {
     LOGOUT("注销"),
     MODIFY("修改"),
     UPLOAD("上传"),
-    VIEW("查看");
+    VIEW("查看"),
+    DEL("删除");
 
     private ActionType(String action) {
     }

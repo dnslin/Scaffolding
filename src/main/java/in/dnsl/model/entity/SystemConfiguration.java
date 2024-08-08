@@ -24,6 +24,9 @@ public class SystemConfiguration {
     @Column(name = "blacklist_enabled")
     private String blacklistEnabled;
 
+    @Column(name = "blacklist")
+    private String blackList;
+
     @Column(name = "login_upload_enabled", nullable = false)
     private Boolean loginUploadEnabled;
 

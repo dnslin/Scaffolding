@@ -1,11 +1,17 @@
 package in.dnsl.controller;
 
 import cn.dev33.satoken.annotation.SaCheckLogin;
+import cn.dev33.satoken.annotation.SaCheckRole;
+import cn.dev33.satoken.stp.StpUtil;
+import in.dnsl.annotation.LogOperation;
 import in.dnsl.core.WrapMapper;
 import in.dnsl.core.Wrapper;
+import in.dnsl.enums.ActionType;
+import in.dnsl.model.dto.AccountInfoDto;
 import in.dnsl.model.dto.GenTokenDto;
 import in.dnsl.model.vo.TokenProVo;
 import in.dnsl.service.TokenService;
+import in.dnsl.utils.Common;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
@@ -45,8 +51,8 @@ public class TokenController {
     // 删除token
     @SaCheckLogin
     @PostMapping("/deleteToken")
+    @LogOperation(description = "删除token", actionType = ActionType.DEL)
     public Wrapper<Void> deleteToken(@RequestParam Long userId, @RequestParam String token) {
-        log.info("删除token...");
         tokenService.deleteToken(userId, token);
         return WrapMapper.ok();
     }
@@ -54,9 +60,10 @@ public class TokenController {
 
     // 删除用户的所有token
     @SaCheckLogin
+    @SaCheckRole("admin")
     @PostMapping("/deleteAllToken")
+    @LogOperation(description = "删除用户的所有token", actionType = ActionType.DEL)
     public Wrapper<Void> deleteAllToken(@RequestParam Long userId) {
-        log.info("删除用户的所有token...");
         tokenService.deleteAllToken(userId);
         return WrapMapper.ok();
     }
@@ -64,9 +71,9 @@ public class TokenController {
 
     // 删除过期的token
     @SaCheckLogin
+    @SaCheckRole("admin")
     @PostMapping("/deleteExpiredToken")
     public Wrapper<Void> deleteExpiredToken() {
-        log.info("删除过期的token...");
         tokenService.deleteExpiredToken();
         return WrapMapper.ok();
     }
@@ -75,9 +82,9 @@ public class TokenController {
     // 获取用户的所有token
     @SaCheckLogin
     @PostMapping("/getTokenList")
-    public Wrapper<List<TokenProVo>> getTokenList(@RequestParam Long userId) {
-        log.info("获取 用户的所有token...");
-        List<TokenProVo> tokenList = tokenService.getTokenList(userId);
+    public Wrapper<List<TokenProVo>> getTokenList() {
+        AccountInfoDto account = Common.getLoginAccount(StpUtil.getLoginIdAsLong());
+        List<TokenProVo> tokenList = tokenService.getTokenList(account.getUserId());
         return WrapMapper.ok(tokenList);
     }
 
