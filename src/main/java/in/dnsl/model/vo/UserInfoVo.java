@@ -1,7 +1,6 @@
 package in.dnsl.model.vo;
 
 import cn.dev33.satoken.stp.SaTokenInfo;
-import in.dnsl.model.entity.Role;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -24,7 +23,7 @@ public class UserInfoVo {
 
     private String avatar;
 
-    private Set<Role> roles;
+    private Set<RoleVo> roles;
 
-    private SaTokenInfo TokenInfo;
+    private SaTokenInfo tokenInfo;
 }

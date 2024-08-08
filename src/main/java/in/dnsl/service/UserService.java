@@ -1,6 +1,5 @@
 package in.dnsl.service;
 
-import cn.dev33.satoken.stp.SaTokenInfo;
 import cn.dev33.satoken.stp.StpUtil;
 import in.dnsl.constant.Integer4Boolean;
 import in.dnsl.enums.ActionType;
@@ -9,6 +8,7 @@ import in.dnsl.model.dto.*;
 import in.dnsl.model.entity.OperationLog;
 import in.dnsl.model.entity.Role;
 import in.dnsl.model.entity.User;
+import in.dnsl.model.vo.RoleVo;
 import in.dnsl.model.vo.UserInfoVo;
 import in.dnsl.repository.OperationLogRepository;
 import in.dnsl.repository.RoleRepository;
@@ -17,7 +17,6 @@ import in.dnsl.utils.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.SerializationUtils;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
@@ -93,8 +92,7 @@ public class UserService {
         User save = userRepository.save(user);
         UserInfoVo userInfoVo = GenericBeanUtils.copyProperties(save, UserInfoVo.class,false);
         log.info("json{}", JSON.toJSON(save));
-        SaTokenInfo tokenInfo = StpUtil.getTokenInfo();
-        userInfoVo.setTokenInfo(tokenInfo);
+        userInfoVo.setTokenInfo(StpUtil.getTokenInfo());
         return userInfoVo;
     }
 
@@ -102,14 +100,23 @@ public class UserService {
     public UserInfoVo getUserInfo(String username) {
         log.info("查看用户信息-数据量: {}", username);
         User user = checkAndGetUser(username,false);
-        return GenericBeanUtils.copyProperties(user, UserInfoVo.class,false);
+        UserInfoVo userInfoVo = GenericBeanUtils.copyProperties(user, UserInfoVo.class, false);
+        userInfoVo.setRoles(Optional.ofNullable(user.getRoles())
+                .map(roles -> roles.stream()
+                        .map(this::convertToRoleVo)
+                        .collect(Collectors.toSet()))
+                .orElse(null));
+        return userInfoVo;
+    }
+    private RoleVo convertToRoleVo(Role role) {
+        return new RoleVo(role.getId(), role.getName(), role.getDescription());
     }
 
 
     @Transactional(rollbackOn = Exception.class)
-    @CachePut(value = "PicManager:User:cache:userInfo", key = "#info.username")
-    public UserInfoVo updateUserInfo(EditUserDto info) {
-        User user = checkAndGetUser(info.getUsername(),false);
+    @CachePut(value = "PicManager:User:cache:userInfo", key = "#account.username")
+    public UserInfoVo updateUserInfo(EditUserDto info,AccountInfoDto account) {
+        User user = checkAndGetUser(account.getUsername(),false);
         // 如果为空或者为"" 则不修改
         ReflectionUtils.updateFieldsIfPresent(info, user);
         User save = userRepository.save(user);
@@ -134,10 +141,10 @@ public class UserService {
         log.info("用户禁用/启用成功: {}", save);
     }
 
-    public void resetPassword(RestPassDto restPassDto) {
-        User user = checkAndGetUser(restPassDto.getUsername(),false);
+    public void resetPassword(RestPassDto restPassDto,AccountInfoDto account) {
+        User user = checkAndGetUser(account.getUsername(),false);
         if (PasswordUtils.verifyUserPassword(restPassDto.getOldPassword(), user.getPassword(), user.getSalt())) {
-            log.error("密码错误: {}", restPassDto.getUsername());
+            log.error("密码错误: {}", account.getUsername());
             throw new AppException("密码错误");
         }
         String securePassword = PasswordUtils.generateSecurePassword(restPassDto.getPassword(), user.getSalt());

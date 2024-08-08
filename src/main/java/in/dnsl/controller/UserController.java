@@ -14,6 +14,7 @@ import in.dnsl.enums.LimitType;
 import in.dnsl.model.dto.*;
 import in.dnsl.model.vo.UserInfoVo;
 import in.dnsl.service.UserService;
+import in.dnsl.utils.Common;
 import in.dnsl.utils.IPUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +33,7 @@ public class UserController {
 
     private final UserService userService;
 
+
     /**
      * @Title: createUser
      * @Description: 创建用户
@@ -44,6 +46,7 @@ public class UserController {
     @RateLimiter(rules = {@RateLimitRule, @RateLimitRule(time = 10, count = 50)})
     @RateLimiter(rules = {@RateLimitRule(time = 1, count = 2)}, type = LimitType.IP)
     @PostMapping("/create")
+    @LogOperation(description = "创建用户", actionType = ActionType.MODIFY)
     public Wrapper<?> createUser(@Validated @RequestBody UserDto info, HttpServletRequest request) {
         log.info("创建用户...");
         String ipAddress = IPUtils.getClientIp(request);
@@ -84,7 +87,6 @@ public class UserController {
     @LogOperation(description = "用户注销", actionType = ActionType.LOGOUT)
     public Wrapper<?> doLogout() {
         // 根据用户名注销
-        log.info("用户{}注销...", StpUtil.getLoginIdDefaultNull());
         StpUtil.logout();
         return WrapMapper.ok();
     }
@@ -99,9 +101,9 @@ public class UserController {
      */
     @SaCheckLogin
     @GetMapping("/info")
-    public Wrapper<UserInfoVo> getUserInfo(String username) {
-        log.info("{} 查看用户信息...", username);
-        return WrapMapper.ok(userService.getUserInfo(username));
+    public Wrapper<UserInfoVo> getUserInfo() {
+        AccountInfoDto account = Common.getLoginAccount(StpUtil.getLoginId());
+        return WrapMapper.ok(userService.getUserInfo(account.getUsername()));
     }
 
 
@@ -114,9 +116,10 @@ public class UserController {
      */
     @SaCheckLogin
     @PostMapping("/update")
+    @LogOperation(description = "修改用户信息", actionType = ActionType.MODIFY)
     public Wrapper<UserInfoVo> updateUserInfo(@Validated @RequestBody EditUserDto info) {
-        log.info("用户{}修改用户信息...", info.getUsername());
-        return WrapMapper.ok(userService.updateUserInfo(info));
+        AccountInfoDto account = Common.getLoginAccount(StpUtil.getLoginIdAsLong());
+        return WrapMapper.ok(userService.updateUserInfo(info, account));
     }
 
 
@@ -129,9 +132,10 @@ public class UserController {
      * @date: 2024/3/24 16:26
      */
     @SaCheckLogin
+    @SaCheckRole("admin")
     @PostMapping("/delete")
+    @LogOperation(description = "删除用户", actionType = ActionType.MODIFY)
     public Wrapper<?> deleteUser(String username) {
-        log.info("用户{}删除用户...", username);
         userService.deleteUser(username);
         return WrapMapper.ok();
     }
@@ -146,7 +150,9 @@ public class UserController {
      * @date: 2024/3/24 16:26
      */
     @SaCheckLogin
+    @SaCheckRole("admin")
     @PostMapping("/disable")
+    @LogOperation(description = "禁用用户", actionType = ActionType.MODIFY)
     public Wrapper<?> disableUser(@RequestBody @Validated UserStatusDto userStatusDto) {
         log.info("用户{}禁用/启用{}用户...", userStatusDto.getUsername(), userStatusDto.getDisable());
         userService.disableUser(userStatusDto);
@@ -165,15 +171,17 @@ public class UserController {
      */
     @SaCheckLogin
     @PostMapping("/reset")
+    @LogOperation(description = "重置密码", actionType = ActionType.MODIFY)
     public Wrapper<?> resetPassword(@RequestBody @Validated RestPassDto restPassDto) {
-        log.info("用户{}重置密码...", restPassDto.getUsername());
-        userService.resetPassword(restPassDto);
+        AccountInfoDto account = Common.getLoginAccount(StpUtil.getLoginIdAsLong());
+        log.info("用户{}重置密码...", account.getUsername());
+        userService.resetPassword(restPassDto,account);
         return WrapMapper.ok();
     }
 
     @SaCheckLogin
-    @PostMapping("/assign")
     @SaCheckRole("admin")
+    @PostMapping("/assign")
     @LogOperation(description = "更新角色", actionType = ActionType.MODIFY)
     public Wrapper<List<String>> addRole(@RequestBody @Validated UserRoleDto userRoleDto) {
         // 此接口 仅超级管理员可调用
