@@ -25,7 +25,7 @@ public class SiteConfigService {
         SiteConfig config = repository.findSiteConfigById(1L).orElseThrow(
                 () -> new AppException("网站配置信息不存在")
         );
-        return GenericBeanUtils.copyProperties(config, SiteConfigDto.class);
+        return GenericBeanUtils.copyProperties(config, SiteConfigDto.class,false);
     }
 
     @Transactional
@@ -35,6 +35,6 @@ public class SiteConfigService {
         // 默认只有一条数据 所以id为1L
         siteConfig.setId(1L);
         SiteConfig save = repository.save(siteConfig);
-        return GenericBeanUtils.copyProperties(save, SiteConfigDto.class);
+        return GenericBeanUtils.copyProperties(save, SiteConfigDto.class,false);
     }
 }

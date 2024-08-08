@@ -10,7 +10,6 @@ import lombok.*;
 @Builder
 @Entity
 @AllArgsConstructor
-@NoArgsConstructor
 @RequiredArgsConstructor
 @Table(name = "system_configurations")
 public class SystemConfiguration {

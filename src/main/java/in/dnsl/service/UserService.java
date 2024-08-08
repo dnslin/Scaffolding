@@ -13,13 +13,11 @@ import in.dnsl.model.vo.UserInfoVo;
 import in.dnsl.repository.OperationLogRepository;
 import in.dnsl.repository.RoleRepository;
 import in.dnsl.repository.UserRepository;
-import in.dnsl.utils.GenericBeanUtils;
-import in.dnsl.utils.PasswordUtils;
-import in.dnsl.utils.ReflectionUtils;
-import in.dnsl.utils.UniqueIdGenerator;
+import in.dnsl.utils.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.SerializationUtils;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
@@ -93,7 +91,8 @@ public class UserService {
         StpUtil.login(user.getId() + ":" + user.getUsername());
         log.info("用户登录成功: {}", user.getNickname());
         User save = userRepository.save(user);
-        UserInfoVo userInfoVo = GenericBeanUtils.copyProperties(save, UserInfoVo.class);
+        UserInfoVo userInfoVo = GenericBeanUtils.copyProperties(save, UserInfoVo.class,false);
+        log.info("json{}", JSON.toJSON(save));
         SaTokenInfo tokenInfo = StpUtil.getTokenInfo();
         userInfoVo.setTokenInfo(tokenInfo);
         return userInfoVo;
@@ -103,7 +102,7 @@ public class UserService {
     public UserInfoVo getUserInfo(String username) {
         log.info("查看用户信息-数据量: {}", username);
         User user = checkAndGetUser(username,false);
-        return GenericBeanUtils.copyProperties(user, UserInfoVo.class);
+        return GenericBeanUtils.copyProperties(user, UserInfoVo.class,false);
     }
 
 
@@ -115,7 +114,7 @@ public class UserService {
         ReflectionUtils.updateFieldsIfPresent(info, user);
         User save = userRepository.save(user);
         log.info("用户信息修改成功: {}", save);
-        return GenericBeanUtils.copyProperties(save, UserInfoVo.class);
+        return GenericBeanUtils.copyProperties(save, UserInfoVo.class,false);
     }
 
     @Transactional(rollbackOn = Exception.class)

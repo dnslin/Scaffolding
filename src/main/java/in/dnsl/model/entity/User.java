@@ -1,7 +1,9 @@
 package in.dnsl.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
+
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -15,6 +17,7 @@ import java.util.Set;
 @AllArgsConstructor
 @RequiredArgsConstructor
 public class User {
+
     @Id
     private Long id;
 
@@ -52,5 +55,6 @@ public class User {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
+    @JsonManagedReference
     private Set<Role> roles = new HashSet<>();
 }

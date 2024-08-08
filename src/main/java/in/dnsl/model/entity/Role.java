@@ -1,5 +1,7 @@
 package in.dnsl.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -26,6 +28,8 @@ public class Role {
     private String description;
 
     @ManyToMany(mappedBy = "roles", fetch = FetchType.LAZY)
+    @JsonBackReference
+    @JsonIgnoreProperties
     private Set<User> users = new HashSet<>();
 
     @ManyToMany(fetch = FetchType.LAZY)
