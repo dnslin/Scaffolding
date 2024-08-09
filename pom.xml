@@ -26,6 +26,9 @@
         <ehcache.version>3.10.8</ehcache.version>
         <graph.version>3.2.2</graph.version>
         <jackjson-datatype-hibernate6.version>2.17.2</jackjson-datatype-hibernate6.version>
+        <thumbnailator.version>0.4.20</thumbnailator.version>
+        <metadata-extractor.version>2.19.0</metadata-extractor.version>
+        <webp.version>0.1.6</webp.version>
     </properties>
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -145,6 +148,21 @@
             <groupId>me.kuku</groupId>
             <artifactId>utils</artifactId>
             <version>${kuku-utils.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>net.coobird</groupId>
+            <artifactId>thumbnailator</artifactId>
+            <version>${thumbnailator.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.drewnoakes</groupId>
+            <artifactId>metadata-extractor</artifactId>
+            <version>${metadata-extractor.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.sejda.imageio</groupId>
+            <artifactId>webp-imageio</artifactId>
+            <version>${webp.version}</version>
         </dependency>
     </dependencies>
 
