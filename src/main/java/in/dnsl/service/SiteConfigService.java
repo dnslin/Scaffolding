@@ -12,6 +12,8 @@ import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
+import static in.dnsl.enums.ResponseEnum.CONFIG_NOT_EXIST;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -23,7 +25,7 @@ public class SiteConfigService {
     public SiteConfigDto getSiteConfig() {
         log.info("获取网站的配置信息...");
         SiteConfig config = repository.findSiteConfigById(1L).orElseThrow(
-                () -> new AppException("网站配置信息不存在")
+                () -> new AppException(CONFIG_NOT_EXIST)
         );
         return GenericBeanUtils.copyProperties(config, SiteConfigDto.class,false);
     }

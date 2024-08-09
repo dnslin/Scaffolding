@@ -13,6 +13,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+import static in.dnsl.enums.ResponseEnum.UPLOAD_CONFIG_NOT_INIT;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -26,7 +28,7 @@ public class UploadConfigurationService {
      * 如果不存在配置,则创建一个默认配置
      */
     @Transactional
-    @CachePut(value = "PicManager:Upload:cache:config", key = "'1'")
+    @Cacheable(value = "PicManager:Upload:cache:config", key = "'1'")
     public UploadConfiguration getCurrentConfiguration() {
         return repository.findById(1L)
                 .orElseGet(this::createDefaultConfiguration);
@@ -37,7 +39,7 @@ public class UploadConfigurationService {
     @CachePut(value = "PicManager:Upload:cache:config", key = "#result.id")
     public UploadConfiguration updateConfiguration(UploadConfiguration configuration) {
         UploadConfiguration existing = repository.findById(1L).orElseThrow(()->
-                new AppException("上传配置未初始化"));
+                new AppException(UPLOAD_CONFIG_NOT_INIT));
         // 更新现有配置的字段,保留ID和创建时间
         configuration.setId(existing.getId());
         configuration.setCreatedAt(existing.getCreatedAt());

@@ -25,6 +25,8 @@ import java.lang.reflect.Method;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static in.dnsl.enums.ResponseEnum.ACCESS_LIMIT;
+
 @Aspect
 @Component
 public class RateLimiterAspect {
@@ -61,9 +63,7 @@ public class RateLimiterAspect {
                         .map(rateLimiters -> Arrays.asList(rateLimiters.value()))
                         .orElse(Collections.emptyList()));
 
-        if (!allowRequest(limiters, name)) {
-            throw new AppException("访问过于频繁，请稍候再试");
-        }
+        if (!allowRequest(limiters, name)) throw new AppException(ACCESS_LIMIT);
     }
 
     private boolean allowRequest(List<RateLimiter> rateLimiters, String name) {

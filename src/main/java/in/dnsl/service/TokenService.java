@@ -24,6 +24,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import static in.dnsl.enums.ResponseEnum.*;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -40,11 +42,11 @@ public class TokenService {
     @Cacheable(value = "PicManager:Token:cache:token" ,key = "#account.userId")
     public TokenProVo generateToken(GenTokenDto dto, AccountInfoDto account) {
         User user = userRepository.findByIdAndEnabled(account.getUserId(), true)
-                .orElseThrow(() -> new AppException("用户不存在或禁用"));
+                .orElseThrow(() -> new AppException(USER_NOT_EXIST));
         // 判断tokenName是否存在 如果存在则抛出异常
         repository.findByUserIdAndName(account.getUserId(), dto.getTokenName())
                 .ifPresent(token -> {
-                    throw new AppException("token名称不允许重复");
+                    throw new AppException(TOKEN_NAME);
                 });
         // 生成Token
         String tokenValue = TokenGenerator.generateToken();
@@ -73,12 +75,12 @@ public class TokenService {
     public boolean checkToken(String token) {
         // 先根据token查出tokenId和用户id,不存在则过期或者不存在
         Token tokenEntity = repository.findByToken(token)
-                .orElseThrow(() -> new AppException("token不存在或已过期"));
+                .orElseThrow(() -> new AppException(TOKEN_NOT));
         // 拼接redis key
         String key = String.format(RedisKeyConstant.TOKEN_KEY, tokenEntity.getUserId(), tokenEntity.getTokenId());
         // 在redis里面查找token 为 null 则过期或者不存在
         String tokenValue = redisUtils.get(key);
-        if (tokenValue == null) throw new AppException("token不存在或已过期");
+        if (tokenValue == null) throw new AppException(TOKEN_NOT);
         return true;
     }
 
@@ -86,7 +88,7 @@ public class TokenService {
     @Cacheable(value = "PicManager:Token:cache:list" ,key = "#userId")
     public void deleteToken(Long userId, String token) {
         Token tokenEntity = repository.findByUserIdAndToken(userId, token)
-                .orElseThrow(() -> new AppException("token不存在"));
+                .orElseThrow(() -> new AppException(TOKEN_NOT));
         repository.delete(tokenEntity);
         // 删除redis里面的token 构建redis key
         String key = String.format(RedisKeyConstant.TOKEN_KEY, userId, tokenEntity.getTokenId());
@@ -113,7 +115,7 @@ public class TokenService {
     @Cacheable(value = "PicManager:Token:cache:token-list" ,key = "#userId")
     public List<TokenProVo> getTokenList(Long userId) {
         boolean userCheck = userRepository.existsById(userId);
-        if (!userCheck) throw new AppException("用户不存在或者被禁用");
+        if (!userCheck) throw new AppException(USER_NOT_EXIST);
         // 从redis里面获取用户的所有token
         String key = String.format(RedisKeyConstant.TOKEN_KEY, userId, "*");
         Set<String> keys = redisUtils.keys(key);
@@ -130,7 +132,7 @@ public class TokenService {
 
     public void extendToken(Long userId, String token, Integer days) {
         Token tokenEntity = repository.findByUserIdAndToken(userId, token)
-                .orElseThrow(() -> new AppException("token不存在"));
+                .orElseThrow(() -> new AppException(TOKEN_NOT));
         // 延长token有效期
         tokenEntity.setExpirationTime(tokenEntity.getExpirationTime().plusDays(days));
         repository.save(tokenEntity);

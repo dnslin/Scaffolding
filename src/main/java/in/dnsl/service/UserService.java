@@ -29,6 +29,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static in.dnsl.enums.ResponseEnum.*;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -72,7 +74,7 @@ public class UserService {
         // 校验密码
         if (PasswordUtils.verifyUserPassword(loginDTO.getPassword(), user.getPassword(), user.getSalt())) {
             log.error("密码错误-->: {}", loginDTO.getUsername());
-            throw new AppException("用户或者密码错误");
+            throw new AppException(USER_OR_PASSWORD_ERROR);
         }
         // 记录登录日志
         logRepository.save(OperationLog.builder()
@@ -149,7 +151,7 @@ public class UserService {
         User user = checkAndGetUser(account.getUsername(),false);
         if (PasswordUtils.verifyUserPassword(restPassDto.getOldPassword(), user.getPassword(), user.getSalt())) {
             log.error("密码错误: {}", account.getUsername());
-            throw new AppException("密码错误");
+            throw new AppException(USER_OR_PASSWORD_ERROR);
         }
         String securePassword = PasswordUtils.generateSecurePassword(restPassDto.getPassword(), user.getSalt());
         user.setPassword(securePassword);
@@ -169,7 +171,7 @@ public class UserService {
         User user = checkAndGetUser(userRoleDto.getUsername(), false);
         Set<Role> newRoles = userRoleDto.getRoles().stream()
                 .map(roleName -> roleRepository.findByName(roleName)
-                        .orElseThrow(() -> new AppException("角色不存在: " + roleName)))
+                        .orElseThrow(() -> new AppException(ROLE_NOT_EXIST)))
                 .collect(Collectors.toSet());
         // 清除用户当前的所有角色，然后设置新的角色集合
         user.getRoles().clear();
@@ -186,10 +188,10 @@ public class UserService {
     private User checkAndGetUser(String username, boolean checkIfExists) {
         return userRepository.findByUsernameAndEnabled(username,true)
                 .or(() -> {
-                    if (checkIfExists) throw new AppException("用户已存在");
+                    if (checkIfExists) throw new AppException(USER_EXIST);
                     return Optional.empty();
                 })
-                .orElseThrow(() -> new AppException("用户不存在,或者已被禁用"));
+                .orElseThrow(() -> new AppException(USER_OR_DISABLE_ERROR));
     }
 
 }
