@@ -17,13 +17,10 @@
         <sqlite.version>3.46.0.0</sqlite.version>
         <hibernate-community-dialects.version>6.5.2.Final</hibernate-community-dialects.version>
         <lombok.version>1.18.34</lombok.version>
-        <guava.version>33.2.1-jre</guava.version>
         <commons-lang3.version>3.15.0</commons-lang3.version>
-        <commons-io.version>2.16.1</commons-io.version>
         <spring-boot.version>3.3.2</spring-boot.version>
         <sa-token.version>1.38.0</sa-token.version>
         <kuku-utils.version>2.3.12.1</kuku-utils.version>
-        <ehcache.version>3.10.8</ehcache.version>
         <graph.version>3.2.2</graph.version>
         <jackjson-datatype-hibernate6.version>2.17.2</jackjson-datatype-hibernate6.version>
         <thumbnailator.version>0.4.20</thumbnailator.version>
@@ -118,19 +115,9 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>${guava.version}</version>
-        </dependency>
-        <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
             <version>${commons-lang3.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-            <version>${commons-io.version}</version>
         </dependency>
         <dependency>
             <groupId>cn.dev33</groupId>
@@ -139,17 +126,8 @@
         </dependency>
         <dependency>
             <groupId>cn.dev33</groupId>
-            <artifactId>sa-token-oauth2</artifactId>
-            <version>${sa-token.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>cn.dev33</groupId>
             <artifactId>sa-token-redis-jackson</artifactId>
             <version>${sa-token.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-pool2</artifactId>
         </dependency>
         <dependency>
             <groupId>me.kuku</groupId>
