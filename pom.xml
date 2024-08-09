@@ -30,6 +30,13 @@
         <metadata-extractor.version>2.19.0</metadata-extractor.version>
         <webp.version>0.1.6</webp.version>
     </properties>
+    <repositories>
+        <repository>
+            <id>kuku</id>
+            <url>https://nexus.kuku.me/repository/maven-public/</url>
+        </repository>
+    </repositories>
+
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
