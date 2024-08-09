@@ -1,7 +1,6 @@
 package in.dnsl.controller;
 
 import cn.dev33.satoken.annotation.SaCheckLogin;
-import cn.dev33.satoken.annotation.SaCheckRole;
 import cn.dev33.satoken.stp.StpUtil;
 import in.dnsl.annotation.LogOperation;
 import in.dnsl.core.WrapMapper;

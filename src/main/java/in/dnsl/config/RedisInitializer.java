@@ -1,18 +1,13 @@
 package in.dnsl.config;
 
 import in.dnsl.constant.RedisKeyConstant;
-import in.dnsl.exception.AppException;
-import in.dnsl.model.entity.SiteConfig;
 import in.dnsl.repository.SiteConfigRepository;
 import in.dnsl.repository.UserRepository;
-import in.dnsl.utils.JSON;
 import in.dnsl.utils.RedisUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
-
-import java.util.Optional;
 
 
 @Slf4j

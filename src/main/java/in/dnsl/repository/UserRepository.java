@@ -4,7 +4,6 @@ import com.cosium.spring.data.jpa.entity.graph.repository.EntityGraphJpaReposito
 import in.dnsl.model.entity.User;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.data.jpa.repository.EntityGraph;
-import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Optional;

@@ -3,7 +3,6 @@ package in.dnsl.model.info;
 
 import lombok.Getter;
 import lombok.ToString;
-import lombok.Value;
 
 import java.util.ArrayList;
 import java.util.HashMap;

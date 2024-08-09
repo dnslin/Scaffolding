@@ -66,7 +66,7 @@ public abstract class JSON {
     }
 
     /**
-     * 设置 mappepr 的通用属性
+     * 设置 mapper 的通用属性
      */
     private static void buildCommonMapper(ObjectMapper mapper) {
         mapper.registerModule(dateModule);
@@ -203,7 +203,7 @@ public abstract class JSON {
         try {
             objectList = mapper.readValue(json, javaType);
         } catch (Exception e) {
-            logger.error("parseList error:" + e.getMessage(), e);
+            logger.error("parseList error:{}", e.getMessage(), e);
             objectList = null;
         }
 
@@ -223,7 +223,7 @@ public abstract class JSON {
         try {
             result = mapper.readValue(toJSON(obj), type);
         } catch (Exception e) {
-            logger.error("parse error:" + e.getMessage(), e);
+            logger.error("parse error:{}", e.getMessage(), e);
             result = null;
         }
 

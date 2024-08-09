@@ -1,7 +1,7 @@
 package in.dnsl.enums;
 
 /**
- * @Description : 限流类型
+ * {@code @Description} : 限流类型
  **/
 public enum LimitType {
     /**

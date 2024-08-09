@@ -8,7 +8,7 @@ public enum ActionType {
     VIEW("查看"),
     DEL("删除");
 
-    private ActionType(String action) {
+    ActionType(String action) {
     }
 
 }
