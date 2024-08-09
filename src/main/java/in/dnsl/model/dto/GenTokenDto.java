@@ -7,9 +7,6 @@ import lombok.Data;
 @Data
 public class GenTokenDto {
 
-    @NotNull(message = "用户id不能为空")
-    private Long userId;
-
     @NotBlank(message = "token名称不能为空")
     private String tokenName;
 
