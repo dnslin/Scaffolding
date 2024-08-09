@@ -2,6 +2,7 @@ package in.dnsl.service;
 
 import in.dnsl.constant.RedisKeyConstant;
 import in.dnsl.exception.AppException;
+import in.dnsl.model.dto.AccountInfoDto;
 import in.dnsl.model.dto.GenTokenDto;
 import in.dnsl.model.entity.Token;
 import in.dnsl.model.entity.User;
@@ -36,12 +37,12 @@ public class TokenService {
 
 
     @Transactional(rollbackOn = Exception.class)
-    @Cacheable(value = "PicManager:Token:cache:token" ,key = "#dto.userId")
-    public TokenProVo generateToken(GenTokenDto dto) {
-        User user = userRepository.findByIdAndEnabled(dto.getUserId(), true)
+    @Cacheable(value = "PicManager:Token:cache:token" ,key = "#account.userId")
+    public TokenProVo generateToken(GenTokenDto dto, AccountInfoDto account) {
+        User user = userRepository.findByIdAndEnabled(account.getUserId(), true)
                 .orElseThrow(() -> new AppException("用户不存在或禁用"));
         // 判断tokenName是否存在 如果存在则抛出异常
-        repository.findByUserIdAndName(dto.getUserId(), dto.getTokenName())
+        repository.findByUserIdAndName(account.getUserId(), dto.getTokenName())
                 .ifPresent(token -> {
                     throw new AppException("token名称不允许重复");
                 });
@@ -57,7 +58,7 @@ public class TokenService {
                 .build();
         Token save = repository.save(token);
         // 往 redis 存放一份 token
-        String key = String.format(RedisKeyConstant.TOKEN_KEY, dto.getUserId(), save.getTokenId());
+        String key = String.format(RedisKeyConstant.TOKEN_KEY, account.getUserId(), save.getTokenId());
         String value = JSON.toJSON(save);
         redisUtils.setEx(key, value, dto.getDay(), TimeUnit.DAYS);
         log.info("用户{}生成token:{}", user.getUsername(), save.getToken());

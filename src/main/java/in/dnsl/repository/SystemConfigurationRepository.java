@@ -5,5 +5,4 @@ import in.dnsl.model.entity.SystemConfiguration;
 
 public interface SystemConfigurationRepository extends EntityGraphJpaRepository<SystemConfiguration, Long> {
 
-    SystemConfiguration findFirstByOrderByIdAsc();
 }

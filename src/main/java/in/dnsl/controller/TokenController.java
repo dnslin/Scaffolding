@@ -32,8 +32,8 @@ public class TokenController {
     @SaCheckLogin
     @PostMapping("/generate")
     public Wrapper<TokenProVo> generateToken(@RequestBody @Validated GenTokenDto genTokenDto) {
-        log.info("生成token...");
-        TokenProVo tokenProVo = tokenService.generateToken(genTokenDto);
+        AccountInfoDto account = Common.getLoginAccount(StpUtil.getLoginIdAsLong());
+        TokenProVo tokenProVo = tokenService.generateToken(genTokenDto,account);
         return WrapMapper.ok(tokenProVo);
     }
 
@@ -42,7 +42,6 @@ public class TokenController {
     @SaCheckLogin
     @PostMapping("/checkToken")
     public Wrapper<Boolean> checkToken(@RequestParam String token) {
-        log.info("校验token...");
         boolean result = tokenService.checkToken(token);
         return WrapMapper.ok(result);
     }
@@ -52,26 +51,26 @@ public class TokenController {
     @SaCheckLogin
     @PostMapping("/deleteToken")
     @LogOperation(description = "删除token", actionType = ActionType.DEL)
-    public Wrapper<Void> deleteToken(@RequestParam Long userId, @RequestParam String token) {
-        tokenService.deleteToken(userId, token);
+    public Wrapper<Void> deleteToken(@RequestParam String token) {
+        AccountInfoDto account = Common.getLoginAccount(StpUtil.getLoginIdAsLong());
+        tokenService.deleteToken(account.getUserId(), token);
         return WrapMapper.ok();
     }
 
 
     // 删除用户的所有token
     @SaCheckLogin
-    @SaCheckRole("admin")
     @PostMapping("/deleteAllToken")
     @LogOperation(description = "删除用户的所有token", actionType = ActionType.DEL)
-    public Wrapper<Void> deleteAllToken(@RequestParam Long userId) {
-        tokenService.deleteAllToken(userId);
+    public Wrapper<Void> deleteAllToken() {
+        AccountInfoDto account = Common.getLoginAccount(StpUtil.getLoginIdAsLong());
+        tokenService.deleteAllToken(account.getUserId());
         return WrapMapper.ok();
     }
 
 
     // 删除过期的token
     @SaCheckLogin
-    @SaCheckRole("admin")
     @PostMapping("/deleteExpiredToken")
     public Wrapper<Void> deleteExpiredToken() {
         tokenService.deleteExpiredToken();
@@ -91,9 +90,10 @@ public class TokenController {
     // 延长token有效期
     @SaCheckLogin
     @PostMapping("/extendToken")
-    public Wrapper<Void> extendToken(@RequestParam Long userId, @RequestParam String token, @RequestParam Integer days) {
+    public Wrapper<Void> extendToken( @RequestParam String token, @RequestParam Integer days) {
         log.info("延长token有效期...");
-        tokenService.extendToken(userId, token, days);
+        AccountInfoDto account = Common.getLoginAccount(StpUtil.getLoginIdAsLong());
+        tokenService.extendToken(account.getUserId(), token, days);
         return WrapMapper.ok();
     }
 }

@@ -19,21 +19,17 @@ public class SystemConfigurationService {
     private final SystemConfigurationRepository repository;
 
 
-    @Cacheable(value = "systemConfig", key = "'systemConfig'")
+    @Cacheable(value = "PicManager:Config:cache", key = "'system'")
     public SystemConfiguration getConfiguration() {
-        return repository.findFirstByOrderByIdAsc();
+        return repository.findById(1L)
+                .orElseGet(() -> repository.save(new SystemConfiguration()));
     }
 
-    @CachePut(key = "'config'")
+    @CachePut(value = "PicManager:Config:cache", key = "'system'")
     @Transactional(rollbackOn = Exception.class)
     public SystemConfiguration updateConfiguration(SystemConfiguration configuration) {
-        SystemConfiguration existingConfig = getConfiguration();
-        if (existingConfig == null) {
-            return repository.save(configuration);
-        } else {
-            // 更新现有配置的字段
-            BeanUtils.copyProperties(configuration, existingConfig, "id");
-            return repository.save(existingConfig);
-        }
+        configuration.setId(1); // 确保ID始终为1
+        return repository.save(configuration);
     }
+
 }

@@ -91,8 +91,12 @@ public class UserService {
         log.info("用户登录成功: {}", user.getNickname());
         User save = userRepository.save(user);
         UserInfoVo userInfoVo = GenericBeanUtils.copyProperties(save, UserInfoVo.class,false);
-        log.info("json{}", JSON.toJSON(save));
         userInfoVo.setTokenInfo(StpUtil.getTokenInfo());
+        userInfoVo.setRoles(Optional.ofNullable(user.getRoles())
+                .map(roles -> roles.stream()
+                        .map(this::convertToRoleVo)
+                        .collect(Collectors.toSet()))
+                .orElse(null));
         return userInfoVo;
     }
 
