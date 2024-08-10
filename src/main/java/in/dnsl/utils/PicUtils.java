@@ -4,6 +4,7 @@ import com.drew.imaging.ImageMetadataReader;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.Tag;
+import in.dnsl.exception.AppException;
 import in.dnsl.model.domain.WatermarkConfig;
 import in.dnsl.model.info.ImageInfo;
 import lombok.extern.slf4j.Slf4j;
@@ -20,12 +21,29 @@ import java.awt.image.BufferedImage;
 import java.awt.image.RescaleOp;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executors;
+
+import static in.dnsl.enums.ResponseEnum.IMG_FORMAT_CHECK_ERROR;
 
 // 提供图片的一些工具方法
 @Slf4j
 public class PicUtils {
+
+    private static final Map<String, String> MAGIC_NUMBERS = new HashMap<>();
+    static {
+        MAGIC_NUMBERS.put("89504E47", "png");
+        MAGIC_NUMBERS.put("FFD8FF", "jpg");
+        MAGIC_NUMBERS.put("47494638", "gif");
+        MAGIC_NUMBERS.put("52494646", "webp");
+        // 可以根据需要添加更多格式
+    }
+
 
     /**
      * 压缩图片
@@ -92,19 +110,90 @@ public class PicUtils {
     }
 
 
-    /**
-     * 获取图片格式
-     *
-     * @param imageFile 图片文件
-     * @return 图片格式
-     */
-    private static String getImageFormat(File imageFile) throws IOException {
-        Iterator<ImageReader> readers = ImageIO.getImageReaders(ImageIO.createImageInputStream(imageFile));
-        if (readers.hasNext()) {
-            ImageReader reader = readers.next();
-            return reader.getFormatName();
+    public static CompletableFuture<String> validateImageAsync(File imageFile) {
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                CompletableFuture<String> extensionFuture = CompletableFuture.supplyAsync(() -> getFileExtension(imageFile));
+                CompletableFuture<String> imageIoFuture = CompletableFuture.supplyAsync(() -> {
+                    try {
+                        return getImageFormatUsingImageIO(imageFile);
+                    } catch (IOException e) {
+                        return "unknown";
+                    }
+                });
+                CompletableFuture<String> magicNumberFuture = CompletableFuture.supplyAsync(() -> {
+                    try {
+                        return getImageFormatUsingMagicNumber(imageFile);
+                    } catch (IOException e) {
+                        return "unknown";
+                    }
+                });
+
+                CompletableFuture<Void> allOf = CompletableFuture.allOf(extensionFuture, imageIoFuture, magicNumberFuture);
+
+                return allOf.thenApply(v -> {
+                    String extension = extensionFuture.join();
+                    String imageIoFormat = imageIoFuture.join();
+                    String magicNumberFormat = magicNumberFuture.join();
+
+                    if (extension.equals(imageIoFormat) && extension.equals(magicNumberFormat)) {
+                        return extension; // 所有方法都一致
+                    } else {
+                        // 如果不一致，返回魔数检测的结果
+                        log.error("文件格式不一致: 文件扩展名 = {}, ImageIO = {}, 魔数 = {}", extension, imageIoFormat, magicNumberFormat);
+                        throw new AppException(IMG_FORMAT_CHECK_ERROR);
+                    }
+                }).join();
+            } catch (Exception e) {
+                return "unknown";
+            }
+        }, Executors.newVirtualThreadPerTaskExecutor());
+    }
+
+    // 获取文件扩展名
+    private static String getFileExtension(File file) {
+        String name = file.getName();
+        int lastIndexOf = name.lastIndexOf(".");
+        if (lastIndexOf == -1) {
+            return ""; // 没有扩展名
         }
-        return "Unknown";
+        return name.substring(lastIndexOf + 1).toLowerCase();
+    }
+
+    // 使用 ImageIO 获取图片格式
+    private static String getImageFormatUsingImageIO(File imageFile) throws IOException {
+        try (var iis = ImageIO.createImageInputStream(imageFile)) {
+            Iterator<ImageReader> readers = ImageIO.getImageReaders(iis);
+            if (readers.hasNext()) {
+                ImageReader reader = readers.next();
+                return reader.getFormatName().toLowerCase();
+            }
+        }
+        return "unknown";
+    }
+
+    // 使用魔数检测图片格式
+    private static String getImageFormatUsingMagicNumber(File file) throws IOException {
+        try (FileInputStream fis = new FileInputStream(file)) {
+            byte[] magicNumber = new byte[8];
+            int read = fis.read(magicNumber);
+            String hexString = bytesToHex(magicNumber);
+
+            for (Map.Entry<String, String> entry : MAGIC_NUMBERS.entrySet()) {
+                if (hexString.startsWith(entry.getKey())) {
+                    return entry.getValue();
+                }
+            }
+        }
+        return "unknown";
+    }
+
+    private static String bytesToHex(byte[] bytes) {
+        StringBuilder result = new StringBuilder();
+        for (byte b : bytes) {
+            result.append(String.format("%02X", b));
+        }
+        return result.toString();
     }
 
     /**

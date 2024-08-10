@@ -26,7 +26,11 @@ public enum ResponseEnum {
     // 用户不存在 或者 已经被禁用
     USER_OR_DISABLE_ERROR("1009", "用户不存在或者被禁用"),
     // 角色不存在
-    ROLE_NOT_EXIST("1010", "角色不存在");
+    ROLE_NOT_EXIST("1010", "角色不存在"),
+    // 获取文件格式发送错误
+    IMG_FORMAT_ERROR("1011", "获取文件格式发送错误"),
+    // 图片格式校验错误 该图片格式出现错误或者进行伪装
+    IMG_FORMAT_CHECK_ERROR("1012", "图片格式校验错误,该图片格式出现错误或者进行伪装");
 
     private final String code;
     private final String message;
