@@ -4,45 +4,28 @@ import com.drew.imaging.ImageMetadataReader;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.Tag;
-import in.dnsl.enums.Position;
+import in.dnsl.model.domain.WatermarkConfig;
 import in.dnsl.model.info.ImageInfo;
+import lombok.extern.slf4j.Slf4j;
 import net.coobird.thumbnailator.Thumbnails;
 import net.coobird.thumbnailator.geometry.Positions;
 
-import java.io.ByteArrayOutputStream;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import java.awt.*;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.RescaleOp;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
 
 // 提供图片的一些工具方法
+@Slf4j
 public class PicUtils {
-
-    /**
-     * 添加水印
-     *
-     * @param originalImage 原始图片
-     * @param watermarkText 水印文字
-     * @param position      水印位置（如：右下角）
-     * @return 添加水印后的图片
-     */
-    public static BufferedImage addWatermark(BufferedImage originalImage, String watermarkText, Position position) {
-        Graphics2D g2d = (Graphics2D) originalImage.getGraphics();
-        AlphaComposite alphaChannel = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.3f);
-        g2d.setComposite(alphaChannel);
-        g2d.setColor(Color.WHITE);
-        g2d.setFont(new Font("Arial", Font.BOLD, 64));
-        FontMetrics fontMetrics = g2d.getFontMetrics();
-        Rectangle2D rect = fontMetrics.getStringBounds(watermarkText, g2d);
-
-        return getBufferedImage(originalImage, watermarkText, position, g2d, rect);
-    }
 
     /**
      * 压缩图片
@@ -266,25 +249,6 @@ public class PicUtils {
     }
 
 
-    /**
-     * 添加文本
-     *
-     * @param originalImage 原始图片
-     * @param text          要添加的文本
-     * @param font          字体
-     * @param color         颜色
-     * @param x             x坐标
-     * @param y             y坐标
-     * @return 添加文本后的图片
-     */
-    public static BufferedImage addText(BufferedImage originalImage, String text, Font font, Color color, int x, int y) {
-        Graphics2D g2d = originalImage.createGraphics();
-        g2d.setFont(font);
-        g2d.setColor(color);
-        g2d.drawString(text, x, y);
-        g2d.dispose();
-        return originalImage;
-    }
 
 
     /**
@@ -302,102 +266,67 @@ public class PicUtils {
                 .asBufferedImage();
     }
 
+    private static BufferedImage addTextWatermark(BufferedImage originalImage, String text, Font font, Color color,
+                                                  WatermarkConfig.Position position, float opacity, float scale) {
+        Graphics2D g2d = originalImage.createGraphics();
+        configureGraphics(g2d, font, color, opacity);
 
-    /**
-     * 添加水印图片
-     *
-     * @param originalImage  原始图片
-     * @param watermarkImage 水印图片
-     * @param position       水印位置
-     * @param opacity        不透明度 (0.0f to 1.0f)
-     * @return 添加水印后的图片
-     */
-    public static BufferedImage addImageWatermark(BufferedImage originalImage, BufferedImage watermarkImage, Position position, float opacity) {
-        int x;
-        int y = switch (position) {
-            case TOP_LEFT -> {
-                x = 10;
-                yield 10;
-            }
-            case TOP_RIGHT -> {
-                x = originalImage.getWidth() - watermarkImage.getWidth() - 10;
-                yield 10;
-            }
-            case BOTTOM_LEFT -> {
-                x = 10;
-                yield originalImage.getHeight() - watermarkImage.getHeight() - 10;
-            }
-            case BOTTOM_RIGHT -> {
-                x = originalImage.getWidth() - watermarkImage.getWidth() - 10;
-                yield originalImage.getHeight() - watermarkImage.getHeight() - 10;
-            }
-            case CENTER -> {
-                x = (originalImage.getWidth() - watermarkImage.getWidth()) / 2;
-                yield (originalImage.getHeight() - watermarkImage.getHeight()) / 2;
-            }
-        };
+        FontMetrics fontMetrics = g2d.getFontMetrics();
+        Rectangle2D rect = fontMetrics.getStringBounds(text, g2d);
+        Point p = calculatePosition(originalImage, (int) (rect.getWidth() * scale), (int) (rect.getHeight() * scale), position);
+
+        AffineTransform at = new AffineTransform();
+        at.translate(p.x, p.y);
+        at.scale(scale, scale);
+        g2d.setTransform(at);
+
+        g2d.drawString(text, 0, (int) rect.getHeight());
+        g2d.dispose();
+        return originalImage;
+    }
+
+    private static BufferedImage addImageWatermark(BufferedImage originalImage, BufferedImage watermarkImage,
+                                                   Color color, WatermarkConfig.Position position, float opacity, float scale) {
+        int width = (int) (watermarkImage.getWidth() * scale);
+        int height = (int) (watermarkImage.getHeight() * scale);
+        Point p = calculatePosition(originalImage, width, height, position);
 
         Graphics2D g2d = originalImage.createGraphics();
-        g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity));
-        g2d.drawImage(watermarkImage, x, y, null);
-        g2d.dispose();
+        configureGraphics(g2d, null, color, opacity);
 
+        g2d.drawImage(watermarkImage, p.x, p.y, width, height, null);
+        g2d.dispose();
         return originalImage;
     }
 
-    /**
-     * 添加文字水印
-     *
-     * @param originalImage 原始图片
-     * @param watermarkText 水印文字
-     * @param font          水印字体
-     * @param color         水印颜色
-     * @param position      水印位置
-     * @param opacity       不透明度 (0.0f to 1.0f)
-     * @return 添加水印后的图片
-     */
-    public static BufferedImage addTextWatermark(BufferedImage originalImage, String watermarkText, Font font, Color color, Position position, float opacity) {
-        Graphics2D g2d = (Graphics2D) originalImage.getGraphics();
-
-        // 设置合成规则
+    private static void configureGraphics(Graphics2D g2d, Font font, Color color, float opacity) {
         g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity));
-
-        g2d.setFont(font);
-        g2d.setColor(color);
-        FontMetrics fontMetrics = g2d.getFontMetrics();
-        Rectangle2D rect = fontMetrics.getStringBounds(watermarkText, g2d);
-
-        return getBufferedImage(originalImage, watermarkText, position, g2d, rect);
+        if (font != null) g2d.setFont(font);
+        if (color != null) g2d.setColor(color);
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
     }
 
-    private static BufferedImage getBufferedImage(BufferedImage originalImage, String watermarkText, Position position, Graphics2D g2d, Rectangle2D rect) {
-        int x;
-        int y = switch (position) {
-            case TOP_LEFT -> {
-                x = 10;
-                yield (int) rect.getHeight();
-            }
-            case TOP_RIGHT -> {
-                x = originalImage.getWidth() - ((int) rect.getWidth() + 10);
-                yield (int) rect.getHeight();
-            }
-            case BOTTOM_LEFT -> {
-                x = 10;
-                yield originalImage.getHeight() - 10;
-            }
-            case BOTTOM_RIGHT -> {
-                x = originalImage.getWidth() - ((int) rect.getWidth() + 10);
-                yield originalImage.getHeight() - 10;
-            }
-            case CENTER -> {
-                x = (originalImage.getWidth() - (int) rect.getWidth()) / 2;
-                yield (originalImage.getHeight() - (int) rect.getHeight()) / 2;
-            }
+    private static Point calculatePosition(BufferedImage image, int width, int height, WatermarkConfig.Position position) {
+        return switch (position) {
+            case TOP_LEFT -> new Point(10, 10);
+            case TOP_RIGHT -> new Point(image.getWidth() - width - 10, 10);
+            case BOTTOM_LEFT -> new Point(10, image.getHeight() - height - 10);
+            case BOTTOM_RIGHT -> new Point(image.getWidth() - width - 10, image.getHeight() - height - 10);
+            case CENTER -> new Point((image.getWidth() - width) / 2, (image.getHeight() - height) / 2);
         };
+    }
 
-        g2d.drawString(watermarkText, x, y);
-        g2d.dispose();
 
-        return originalImage;
+    public static BufferedImage addWatermark(BufferedImage originalImage, WatermarkConfig config) {
+        if (config.text() != null && config.image() == null) {
+            return addTextWatermark(originalImage, config.text(), config.font(), config.color(),
+                    config.position(), config.opacity(), config.scale());
+        } else if (config.text() == null && config.image() != null) {
+            return addImageWatermark(originalImage, config.image(), config.color(),
+                    config.position(), config.opacity(), config.scale());
+        } else {
+            throw new IllegalArgumentException("水印配置无效: 必须提供文本或图像，但不能同时提供两者或两者兼而有之.");
+        }
     }
 }

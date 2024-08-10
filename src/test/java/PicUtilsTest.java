@@ -1,4 +1,3 @@
-import in.dnsl.enums.Position;
 import in.dnsl.model.info.ImageInfo;
 import in.dnsl.utils.JSON;
 import in.dnsl.utils.PicUtils;
@@ -11,6 +10,7 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Path;
 
@@ -32,14 +32,6 @@ public class PicUtilsTest {
         g2d.dispose();
     }
 
-    @Test
-    void testAddWatermark() {
-        BufferedImage result = PicUtils.addWatermark(testImage, "Test",
-                Position.CENTER);
-        log.info("result:");
-        assertNotNull(result);
-        // 这里可以添加更多的断言来检查水印是否正确添加
-    }
 
     @Test
     void testCompressImage() throws IOException {
@@ -121,12 +113,6 @@ public class PicUtilsTest {
         // 可以添加更多断言来检查圆角是否正确添加
     }
 
-    @Test
-    void testAddText() {
-        BufferedImage withText = PicUtils.addText(testImage, "Test", new Font("Arial", Font.PLAIN, 12), Color.BLACK, 10, 20);
-        assertNotNull(withText);
-        // 可以添加更多断言来检查文本是否正确添加
-    }
 
     @Test
     void testGenerateThumbnail() throws IOException {
@@ -135,12 +121,17 @@ public class PicUtilsTest {
         assertEquals(50, thumbnail.getHeight());
     }
 
+
     @Test
-    void testAddImageWatermark() {
-        BufferedImage watermark = new BufferedImage(20, 20, BufferedImage.TYPE_INT_ARGB);
-        BufferedImage withWatermark = PicUtils.addImageWatermark(testImage, watermark, Position.BOTTOM_RIGHT, 0.5f);
-        assertNotNull(withWatermark);
-        // 可以添加更多断言来检查水印是否正确添加
+    void test01() throws IOException {
+        // jpg 转 webp
+        File imageFile = new File("C:\\Users\\dnslin\\Pictures\\img\\1592844725zVL9.jpg");
+        // file 转为 BufferedImage
+        BufferedImage image = ImageIO.read(imageFile);
+        byte[] webpData = PicUtils.convertFormat(image, "png");
+        try (FileOutputStream fos = new FileOutputStream("output.png")) {
+            fos.write(webpData);
+        }
     }
 
 }
