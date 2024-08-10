@@ -1,7 +1,7 @@
 version: '3.8'
 services:
   scaffolding:
-    image: dnslin/scaffolding:v0.4.2
+    image: dnslin/scaffolding:v0.6.2
     volumes:
       - ./target:/app # 将本地的 target 目录映射到容器内的 /app 目录
     ports:

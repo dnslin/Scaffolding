@@ -3,7 +3,6 @@ package in.dnsl.exception;
 import cn.dev33.satoken.exception.SaTokenException;
 import in.dnsl.core.WrapMapper;
 import in.dnsl.core.Wrapper;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
@@ -28,7 +27,7 @@ public class ControllerExceptionAdvice {
      */
     @ExceptionHandler(AppException.class)
     @ResponseBody
-    public Wrapper<?> appExceptionHandler(AppException ex, HttpServletRequest request){
+    public Wrapper<?> appExceptionHandler(AppException ex){
         return WrapMapper.error(ex.getMessage());
     }
 
@@ -83,20 +82,20 @@ public class ControllerExceptionAdvice {
     @ExceptionHandler(IllegalArgumentException.class)
     public Wrapper<?> handleIllegalArgumentException(IllegalArgumentException ex) {
         log.error("非法参数异常",ex);
-        return WrapMapper.error("非法参数异常");
+        return WrapMapper.error("请求参数传递错误");
     }
 
     @ResponseBody
     @ExceptionHandler(MissingServletRequestParameterException.class)
     public Wrapper<?> handleMissingServletRequestParameterException(MissingServletRequestParameterException ex) {
         log.error("缺少请求参数异常",ex);
-        return WrapMapper.error("缺少请求参数异常");
+        return WrapMapper.error("请求参数出现错误");
     }
 
     @ResponseBody
     @ExceptionHandler(SaTokenException.class)
     public Wrapper<?> handleSaTokenException(SaTokenException ex) {
         log.error("未登录异常",ex);
-        return WrapMapper.error(ex.getMessage());
+        return WrapMapper.error("请登录...");
     }
 }

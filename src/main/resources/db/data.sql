@@ -66,3 +66,30 @@ INSERT INTO system_configurations (
 
 INSERT INTO roles (name, description) VALUES ('ROLE_ADMIN', 'Administrator role');
 INSERT INTO roles (name, description) VALUES ('ROLE_USER', 'User role');
+
+-- 上传配置初始化SQL
+INSERT INTO upload_configuration (
+    storage_directory,
+    default_categorization,
+    allowed_file_formats,
+    file_conversion_formats,
+    max_upload_count,
+    max_image_width,
+    max_image_height,
+    min_image_width,
+    min_image_height,
+    created_at,
+    updated_at
+) VALUES (
+             '/uploads',                              -- 存储目录
+             'TIME_BASED',                            -- 默认分类方式
+             'jpg,jpeg,png,gif,webp,icon',                 -- 允许的文件格式
+             '{"png":["jpg","webp"],"jpg":["webp"]}', -- 文件格式转换映射
+             10,                                      -- 单次最大上传数量
+             5000,                                    -- 最大图片宽度
+             5000,                                    -- 最大图片高度
+             10,                                      -- 最小图片宽度
+             10,                                      -- 最小图片高度
+             CURRENT_TIMESTAMP,                       -- 创建时间
+             CURRENT_TIMESTAMP                        -- 更新时间
+         );
