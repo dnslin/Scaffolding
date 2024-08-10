@@ -47,7 +47,7 @@ public class UserController {
     @RateLimiter(rules = {@RateLimitRule(time = 1, count = 2)}, type = LimitType.IP)
     @PostMapping("/create")
     @LogOperation(description = "创建用户", actionType = ActionType.MODIFY)
-    public Wrapper<?> createUser(@Validated @RequestBody UserDto info, HttpServletRequest request) {
+    public Wrapper<?> createUser(@Validated @RequestBody UserDTO info, HttpServletRequest request) {
         log.info("创建用户...");
         String ipAddress = IPUtils.getClientIp(request);
         info.setLastLoginIp(ipAddress);
@@ -67,7 +67,7 @@ public class UserController {
     @RateLimiter(rules = {@RateLimitRule, @RateLimitRule(time = 10, count = 50)})
     @RateLimiter(rules = {@RateLimitRule(time = 1, count = 2)}, type = LimitType.IP)
     @PostMapping("/login")
-    public Wrapper<UserInfoVo> doLogin(@Validated @RequestBody LoginDto loginDTO, HttpServletRequest request) {
+    public Wrapper<UserInfoVo> doLogin(@Validated @RequestBody LoginDTO loginDTO, HttpServletRequest request) {
         log.info("用户登录...");
         String ipAddress = IPUtils.getClientIp(request);
         loginDTO.setLastLoginIp(ipAddress);
@@ -102,7 +102,7 @@ public class UserController {
     @SaCheckLogin
     @GetMapping("/info")
     public Wrapper<UserInfoVo> getUserInfo() {
-        AccountInfoDto account = Common.getLoginAccount(StpUtil.getLoginId());
+        AccountInfoDTO account = Common.getLoginAccount(StpUtil.getLoginId());
         return WrapMapper.ok(userService.getUserInfo(account.getUsername()));
     }
 
@@ -117,8 +117,8 @@ public class UserController {
     @SaCheckLogin
     @PostMapping("/update")
     @LogOperation(description = "修改用户信息", actionType = ActionType.MODIFY)
-    public Wrapper<UserInfoVo> updateUserInfo(@Validated @RequestBody EditUserDto info) {
-        AccountInfoDto account = Common.getLoginAccount(StpUtil.getLoginIdAsLong());
+    public Wrapper<UserInfoVo> updateUserInfo(@Validated @RequestBody EditUserDTO info) {
+        AccountInfoDTO account = Common.getLoginAccount(StpUtil.getLoginIdAsLong());
         return WrapMapper.ok(userService.updateUserInfo(info, account));
     }
 
@@ -153,7 +153,7 @@ public class UserController {
     @SaCheckRole("admin")
     @PostMapping("/disable")
     @LogOperation(description = "禁用用户", actionType = ActionType.MODIFY)
-    public Wrapper<?> disableUser(@RequestBody @Validated UserStatusDto userStatusDto) {
+    public Wrapper<?> disableUser(@RequestBody @Validated UserStatusDTO userStatusDto) {
         log.info("用户{}禁用/启用{}用户...", userStatusDto.getUsername(), userStatusDto.getDisable());
         userService.disableUser(userStatusDto);
         return WrapMapper.ok();
@@ -172,8 +172,8 @@ public class UserController {
     @SaCheckLogin
     @PostMapping("/reset")
     @LogOperation(description = "重置密码", actionType = ActionType.MODIFY)
-    public Wrapper<?> resetPassword(@RequestBody @Validated RestPassDto restPassDto) {
-        AccountInfoDto account = Common.getLoginAccount(StpUtil.getLoginIdAsLong());
+    public Wrapper<?> resetPassword(@RequestBody @Validated RestPassDTO restPassDto) {
+        AccountInfoDTO account = Common.getLoginAccount(StpUtil.getLoginIdAsLong());
         log.info("用户{}重置密码...", account.getUsername());
         userService.resetPassword(restPassDto,account);
         return WrapMapper.ok();
@@ -183,7 +183,7 @@ public class UserController {
     @SaCheckRole("admin")
     @PostMapping("/assign")
     @LogOperation(description = "更新角色", actionType = ActionType.MODIFY)
-    public Wrapper<List<String>> addRole(@RequestBody @Validated UserRoleDto userRoleDto) {
+    public Wrapper<List<String>> addRole(@RequestBody @Validated UserRoleDTO userRoleDto) {
         // 此接口 仅超级管理员可调用
         log.info("管理员为用户{}分配角色", userRoleDto.getUsername());
         return WrapMapper.ok(userService.updateUserRoles(userRoleDto));

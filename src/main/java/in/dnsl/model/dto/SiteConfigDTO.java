@@ -3,7 +3,7 @@ package in.dnsl.model.dto;
 import lombok.Data;
 
 @Data
-public class SiteConfigDto {
+public class SiteConfigDTO {
 
     /**
      * 网站的名称

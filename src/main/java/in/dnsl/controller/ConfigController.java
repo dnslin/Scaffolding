@@ -7,7 +7,7 @@ import in.dnsl.annotation.LogOperation;
 import in.dnsl.core.WrapMapper;
 import in.dnsl.core.Wrapper;
 import in.dnsl.enums.ActionType;
-import in.dnsl.model.dto.SiteConfigDto;
+import in.dnsl.model.dto.SiteConfigDTO;
 import in.dnsl.model.entity.SiteConfig;
 import in.dnsl.model.entity.SystemConfiguration;
 import in.dnsl.service.SiteConfigService;
@@ -32,10 +32,10 @@ public class ConfigController {
     // 获取网站的配置信息
     @SaIgnore
     @GetMapping("/site/get")
-    public Wrapper<SiteConfigDto> getSiteConfig(HttpServletRequest request) {
+    public Wrapper<SiteConfigDTO> getSiteConfig(HttpServletRequest request) {
         String clientIp = IPUtils.getClientIp(request);
         log.info("获取网站的配置信息---客户端IP地址: {}", clientIp);
-        SiteConfigDto config = service.getSiteConfig();
+        SiteConfigDTO config = service.getSiteConfig();
         return WrapMapper.ok(config);
     }
 
@@ -45,8 +45,8 @@ public class ConfigController {
     @SaCheckRole("admin")
     @PostMapping("/site/update")
     @LogOperation(description = "更新网站的配置信息", actionType = ActionType.MODIFY)
-    public Wrapper<SiteConfigDto> updateSiteConfig(@RequestBody SiteConfig siteConfig) {
-        SiteConfigDto siteConfigDto = service.updateSiteConfig(siteConfig);
+    public Wrapper<SiteConfigDTO> updateSiteConfig(@RequestBody SiteConfig siteConfig) {
+        SiteConfigDTO siteConfigDto = service.updateSiteConfig(siteConfig);
         return WrapMapper.ok(siteConfigDto);
     }
 

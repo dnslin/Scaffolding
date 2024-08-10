@@ -7,7 +7,7 @@ import lombok.Data;
 @Data
 @Builder
 @AllArgsConstructor
-public class AccountInfoDto {
+public class AccountInfoDTO {
 
     private Long userId;
 

@@ -45,7 +45,7 @@ public class UserService {
 
     private final RoleRepository roleRepository;
 
-    public void createUser(UserDto info) {
+    public void createUser(UserDTO info) {
         // 判断用户是否存在
         checkAndGetUser(info.getUsername(), true);
         // 准备ID
@@ -68,7 +68,7 @@ public class UserService {
     }
 
     @Transactional(rollbackOn = Exception.class)
-    public UserInfoVo doLogin(LoginDto loginDTO) {
+    public UserInfoVo doLogin(LoginDTO loginDTO) {
         // 查询用户
         User user = checkAndGetUser(loginDTO.getUsername(), false);
         // 校验密码
@@ -121,7 +121,7 @@ public class UserService {
 
     @Transactional(rollbackOn = Exception.class)
     @CachePut(value = "PicManager:User:cache:userInfo", key = "#account.username")
-    public UserInfoVo updateUserInfo(EditUserDto info,AccountInfoDto account) {
+    public UserInfoVo updateUserInfo(EditUserDTO info, AccountInfoDTO account) {
         User user = checkAndGetUser(account.getUsername(),false);
         // 如果为空或者为"" 则不修改
         ReflectionUtils.updateFieldsIfPresent(info, user);
@@ -140,14 +140,14 @@ public class UserService {
 
     @Transactional(rollbackOn = Exception.class)
     @CacheEvict(value = "PicManager:User:cache:userInfo", key = "#userStatusDto.username")
-    public void disableUser(UserStatusDto userStatusDto) {
+    public void disableUser(UserStatusDTO userStatusDto) {
         User user = checkAndGetUser(userStatusDto.getUsername(),false);
         user.setEnabled(userStatusDto.getDisable());
         User save = userRepository.save(user);
         log.info("用户禁用/启用成功: {}", save);
     }
 
-    public void resetPassword(RestPassDto restPassDto,AccountInfoDto account) {
+    public void resetPassword(RestPassDTO restPassDto, AccountInfoDTO account) {
         User user = checkAndGetUser(account.getUsername(),false);
         if (PasswordUtils.verifyUserPassword(restPassDto.getOldPassword(), user.getPassword(), user.getSalt())) {
             log.error("密码错误: {}", account.getUsername());
@@ -167,7 +167,7 @@ public class UserService {
 
     // 更新用户角色
     @Transactional(rollbackOn = Exception.class)
-    public List<String> updateUserRoles(UserRoleDto userRoleDto) {
+    public List<String> updateUserRoles(UserRoleDTO userRoleDto) {
         User user = checkAndGetUser(userRoleDto.getUsername(), false);
         Set<Role> newRoles = userRoleDto.getRoles().stream()
                 .map(roleName -> roleRepository.findByName(roleName)

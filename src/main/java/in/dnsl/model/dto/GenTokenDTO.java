@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @Data
-public class GenTokenDto {
+public class GenTokenDTO {
 
     @NotBlank(message = "token名称不能为空")
     private String tokenName;

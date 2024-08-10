@@ -7,7 +7,7 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class UserRoleDto {
+public class UserRoleDTO {
     // 用户id
     @NotBlank(message = "用户名称不能为空")
     private String username;

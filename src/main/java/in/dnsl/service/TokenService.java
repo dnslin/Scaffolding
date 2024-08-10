@@ -2,8 +2,8 @@ package in.dnsl.service;
 
 import in.dnsl.constant.RedisKeyConstant;
 import in.dnsl.exception.AppException;
-import in.dnsl.model.dto.AccountInfoDto;
-import in.dnsl.model.dto.GenTokenDto;
+import in.dnsl.model.dto.AccountInfoDTO;
+import in.dnsl.model.dto.GenTokenDTO;
 import in.dnsl.model.entity.Token;
 import in.dnsl.model.entity.User;
 import in.dnsl.model.vo.TokenProVo;
@@ -40,7 +40,7 @@ public class TokenService {
 
     @Transactional(rollbackOn = Exception.class)
     @Cacheable(value = "PicManager:Token:cache:token" ,key = "#account.userId")
-    public TokenProVo generateToken(GenTokenDto dto, AccountInfoDto account) {
+    public TokenProVo generateToken(GenTokenDTO dto, AccountInfoDTO account) {
         User user = userRepository.findByIdAndEnabled(account.getUserId(), true)
                 .orElseThrow(() -> new AppException(USER_NOT_EXIST));
         // 判断tokenName是否存在 如果存在则抛出异常

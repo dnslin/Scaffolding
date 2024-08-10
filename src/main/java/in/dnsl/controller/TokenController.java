@@ -6,8 +6,8 @@ import in.dnsl.annotation.LogOperation;
 import in.dnsl.core.WrapMapper;
 import in.dnsl.core.Wrapper;
 import in.dnsl.enums.ActionType;
-import in.dnsl.model.dto.AccountInfoDto;
-import in.dnsl.model.dto.GenTokenDto;
+import in.dnsl.model.dto.AccountInfoDTO;
+import in.dnsl.model.dto.GenTokenDTO;
 import in.dnsl.model.vo.TokenProVo;
 import in.dnsl.service.TokenService;
 import in.dnsl.utils.Common;
@@ -30,8 +30,8 @@ public class TokenController {
     // 生成token
     @SaCheckLogin
     @PostMapping("/generate")
-    public Wrapper<TokenProVo> generateToken(@RequestBody @Validated GenTokenDto genTokenDto) {
-        AccountInfoDto account = Common.getLoginAccount(StpUtil.getLoginIdAsLong());
+    public Wrapper<TokenProVo> generateToken(@RequestBody @Validated GenTokenDTO genTokenDto) {
+        AccountInfoDTO account = Common.getLoginAccount(StpUtil.getLoginIdAsLong());
         TokenProVo tokenProVo = tokenService.generateToken(genTokenDto,account);
         return WrapMapper.ok(tokenProVo);
     }
@@ -51,7 +51,7 @@ public class TokenController {
     @PostMapping("/deleteToken")
     @LogOperation(description = "删除token", actionType = ActionType.DEL)
     public Wrapper<Void> deleteToken(@RequestParam String token) {
-        AccountInfoDto account = Common.getLoginAccount(StpUtil.getLoginIdAsLong());
+        AccountInfoDTO account = Common.getLoginAccount(StpUtil.getLoginIdAsLong());
         tokenService.deleteToken(account.getUserId(), token);
         return WrapMapper.ok();
     }
@@ -62,7 +62,7 @@ public class TokenController {
     @PostMapping("/deleteAllToken")
     @LogOperation(description = "删除用户的所有token", actionType = ActionType.DEL)
     public Wrapper<Void> deleteAllToken() {
-        AccountInfoDto account = Common.getLoginAccount(StpUtil.getLoginIdAsLong());
+        AccountInfoDTO account = Common.getLoginAccount(StpUtil.getLoginIdAsLong());
         tokenService.deleteAllToken(account.getUserId());
         return WrapMapper.ok();
     }
@@ -81,7 +81,7 @@ public class TokenController {
     @SaCheckLogin
     @PostMapping("/getTokenList")
     public Wrapper<List<TokenProVo>> getTokenList() {
-        AccountInfoDto account = Common.getLoginAccount(StpUtil.getLoginIdAsLong());
+        AccountInfoDTO account = Common.getLoginAccount(StpUtil.getLoginIdAsLong());
         List<TokenProVo> tokenList = tokenService.getTokenList(account.getUserId());
         return WrapMapper.ok(tokenList);
     }
@@ -91,7 +91,7 @@ public class TokenController {
     @PostMapping("/extendToken")
     public Wrapper<Void> extendToken( @RequestParam String token, @RequestParam Integer days) {
         log.info("延长token有效期...");
-        AccountInfoDto account = Common.getLoginAccount(StpUtil.getLoginIdAsLong());
+        AccountInfoDTO account = Common.getLoginAccount(StpUtil.getLoginIdAsLong());
         tokenService.extendToken(account.getUserId(), token, days);
         return WrapMapper.ok();
     }
