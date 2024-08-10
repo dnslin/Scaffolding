@@ -43,7 +43,7 @@ public class PicUtils {
         MAGIC_NUMBERS.put("FFD8FF", "jpg");
         MAGIC_NUMBERS.put("47494638", "gif");
         MAGIC_NUMBERS.put("52494646", "webp");
-        // 可以根据需要添加更多格式
+        // 可以根据需要添加更多格式 这里考虑数据库存储通过Redis缓存进获取
     }
 
 
