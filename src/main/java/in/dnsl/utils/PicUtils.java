@@ -19,10 +19,11 @@ import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.RescaleOp;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -36,6 +37,7 @@ import static in.dnsl.enums.ResponseEnum.IMG_FORMAT_CHECK_ERROR;
 public class PicUtils {
 
     private static final Map<String, String> MAGIC_NUMBERS = new HashMap<>();
+
     static {
         MAGIC_NUMBERS.put("89504E47", "png");
         MAGIC_NUMBERS.put("FFD8FF", "jpg");
@@ -109,89 +111,80 @@ public class PicUtils {
         return imageInfo;
     }
 
-
     public static CompletableFuture<String> validateImageAsync(File imageFile) {
         return CompletableFuture.supplyAsync(() -> {
             try {
-                CompletableFuture<String> extensionFuture = CompletableFuture.supplyAsync(() -> getFileExtension(imageFile));
-                CompletableFuture<String> imageIoFuture = CompletableFuture.supplyAsync(() -> {
-                    try {
-                        return getImageFormatUsingImageIO(imageFile);
-                    } catch (IOException e) {
-                        return "unknown";
-                    }
-                });
-                CompletableFuture<String> magicNumberFuture = CompletableFuture.supplyAsync(() -> {
-                    try {
-                        return getImageFormatUsingMagicNumber(imageFile);
-                    } catch (IOException e) {
-                        return "unknown";
-                    }
-                });
+                byte[] fileContent = Files.readAllBytes(imageFile.toPath());
 
-                CompletableFuture<Void> allOf = CompletableFuture.allOf(extensionFuture, imageIoFuture, magicNumberFuture);
+                CompletableFuture<String> extensionFuture = CompletableFuture.supplyAsync(
+                        () -> getFileExtension(imageFile.getName()));
 
-                return allOf.thenApply(v -> {
-                    String extension = extensionFuture.join();
-                    String imageIoFormat = imageIoFuture.join();
-                    String magicNumberFormat = magicNumberFuture.join();
+                CompletableFuture<String> imageIoFuture = CompletableFuture.supplyAsync(
+                        () -> getImageFormatUsingImageIO(fileContent, imageFile.getName()));
 
-                    if (extension.equals(imageIoFormat) && extension.equals(magicNumberFormat)) {
-                        return extension; // 所有方法都一致
-                    } else {
-                        // 如果不一致，返回魔数检测的结果
-                        log.error("文件格式不一致: 文件扩展名 = {}, ImageIO = {}, 魔数 = {}", extension, imageIoFormat, magicNumberFormat);
-                        throw new AppException(IMG_FORMAT_CHECK_ERROR);
-                    }
-                }).join();
-            } catch (Exception e) {
+                CompletableFuture<String> magicNumberFuture = CompletableFuture.supplyAsync(
+                        () -> getImageFormatUsingMagicNumber(fileContent, imageFile.getName()));
+
+                return CompletableFuture.allOf(extensionFuture, imageIoFuture, magicNumberFuture)
+                        .thenApply(v -> {
+                            String extension = extensionFuture.join();
+                            String imageIoFormat = imageIoFuture.join();
+                            String magicNumberFormat = magicNumberFuture.join();
+
+                            if (extension.equals(imageIoFormat) && extension.equals(magicNumberFormat)) {
+                                return extension;
+                            } else {
+                                log.error("文件格式不一致: 文件扩展名 = {}, ImageIO = {}, 魔数 = {}", extension, imageIoFormat, magicNumberFormat);
+                                throw new AppException(IMG_FORMAT_CHECK_ERROR);
+                            }
+                        }).join();
+            } catch (IOException e) {
+                log.error("读取文件时出错:{} ", imageFile.getName(), e);
                 return "unknown";
             }
         }, Executors.newVirtualThreadPerTaskExecutor());
     }
 
     // 获取文件扩展名
-    private static String getFileExtension(File file) {
-        String name = file.getName();
-        int lastIndexOf = name.lastIndexOf(".");
+    private static String getFileExtension(String fileName) {
+        int lastIndexOf = fileName.lastIndexOf(".");
         if (lastIndexOf == -1) {
-            return ""; // 没有扩展名
+            return "";
         }
-        return name.substring(lastIndexOf + 1).toLowerCase();
+        return fileName.substring(lastIndexOf + 1).toLowerCase();
     }
 
     // 使用 ImageIO 获取图片格式
-    private static String getImageFormatUsingImageIO(File imageFile) throws IOException {
-        try (var iis = ImageIO.createImageInputStream(imageFile)) {
+    private static String getImageFormatUsingImageIO(byte[] fileContent, String name) {
+        try (var iis = ImageIO.createImageInputStream(new ByteArrayInputStream(fileContent))) {
             Iterator<ImageReader> readers = ImageIO.getImageReaders(iis);
             if (readers.hasNext()) {
                 ImageReader reader = readers.next();
                 return reader.getFormatName().toLowerCase();
             }
+        } catch (IOException e) {
+            log.error("无法使用 ImageIO 获取图片格式: {}", name);
         }
         return "unknown";
     }
 
     // 使用魔数检测图片格式
-    private static String getImageFormatUsingMagicNumber(File file) throws IOException {
-        try (FileInputStream fis = new FileInputStream(file)) {
-            byte[] magicNumber = new byte[8];
-            int read = fis.read(magicNumber);
-            String hexString = bytesToHex(magicNumber);
+    private static String getImageFormatUsingMagicNumber(byte[] fileContent, String name) {
+        String hexString = bytesToHex(fileContent, 8); // 只需要前8个字节
 
-            for (Map.Entry<String, String> entry : MAGIC_NUMBERS.entrySet()) {
-                if (hexString.startsWith(entry.getKey())) {
-                    return entry.getValue();
-                }
+        for (Map.Entry<String, String> entry : MAGIC_NUMBERS.entrySet()) {
+            if (hexString.startsWith(entry.getKey())) {
+                return entry.getValue();
             }
         }
+        log.error("无法使用魔数检测图片格式: {}", name);
         return "unknown";
     }
 
-    private static String bytesToHex(byte[] bytes) {
+    private static String bytesToHex(byte[] bytes, int length) {
         StringBuilder result = new StringBuilder();
-        for (byte b : bytes) {
-            result.append(String.format("%02X", b));
+        for (int i = 0; i < Math.min(bytes.length, length); i++) {
+            result.append(String.format("%02X", bytes[i]));
         }
         return result.toString();
     }
@@ -336,8 +329,6 @@ public class PicUtils {
 
         return roundedImage;
     }
-
-
 
 
     /**
