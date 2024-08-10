@@ -36,7 +36,7 @@ public class UploadConfigurationService {
 
 
     @Transactional(rollbackOn = Exception.class)
-    @CachePut(value = "PicManager:Upload:cache:config", key = "#result.id")
+    @CachePut(value = "PicManager:Upload:cache:config", key = "'1'")
     public UploadConfiguration updateConfiguration(UploadConfiguration configuration) {
         UploadConfiguration existing = repository.findById(1L).orElseThrow(()->
                 new AppException(UPLOAD_CONFIG_NOT_INIT));
@@ -96,5 +96,12 @@ public class UploadConfigurationService {
                 (config.getMaxImageHeight() == null || height <= config.getMaxImageHeight());
     }
 
-
+    // 更新存储目录
+    @Transactional(rollbackOn = Exception.class)
+    public UploadConfiguration updateStorageDirectory(String directory) {
+        UploadConfiguration existing = repository.findById(1L).orElseThrow(()->
+                new AppException(UPLOAD_CONFIG_NOT_INIT));
+        existing.setStorageDirectory(directory);
+        return repository.save(existing);
+    }
 }

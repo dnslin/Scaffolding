@@ -1,7 +1,7 @@
 package in.dnsl.service;
 
 import in.dnsl.exception.AppException;
-import in.dnsl.model.dto.SiteConfigDto;
+import in.dnsl.model.dto.SiteConfigDTO;
 import in.dnsl.model.entity.SiteConfig;
 import in.dnsl.repository.SiteConfigRepository;
 import in.dnsl.utils.GenericBeanUtils;
@@ -22,21 +22,21 @@ public class SiteConfigService {
     private final SiteConfigRepository repository;
 
     @Cacheable(value = "PicManager:SiteConfig:cache:siteConfig", key = "'Pic'")
-    public SiteConfigDto getSiteConfig() {
+    public SiteConfigDTO getSiteConfig() {
         log.info("获取网站的配置信息...");
         SiteConfig config = repository.findSiteConfigById(1L).orElseThrow(
                 () -> new AppException(CONFIG_NOT_EXIST)
         );
-        return GenericBeanUtils.copyProperties(config, SiteConfigDto.class,false);
+        return GenericBeanUtils.copyProperties(config, SiteConfigDTO.class,false);
     }
 
     @Transactional
     @CachePut(value = "PicManager:SiteConfig:cache:siteConfig", key = "'Pic'")
-    public SiteConfigDto updateSiteConfig(SiteConfig siteConfig) {
+    public SiteConfigDTO updateSiteConfig(SiteConfig siteConfig) {
         log.info("更新网站的配置信息...");
         // 默认只有一条数据 所以id为1L
         siteConfig.setId(1L);
         SiteConfig save = repository.save(siteConfig);
-        return GenericBeanUtils.copyProperties(save, SiteConfigDto.class,false);
+        return GenericBeanUtils.copyProperties(save, SiteConfigDTO.class,false);
     }
 }

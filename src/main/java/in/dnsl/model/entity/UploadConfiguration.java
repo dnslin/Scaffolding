@@ -71,6 +71,9 @@ public class UploadConfiguration {
     @Column(name = "min_image_height")
     private Integer minImageHeight;
 
+    @Column(name = "file_size")
+    private Integer fileSize;
+
     // 记录创建时间
     @Column(name = "created_at")
     private LocalDateTime createdAt;
