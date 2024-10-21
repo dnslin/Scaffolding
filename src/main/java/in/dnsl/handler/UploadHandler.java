@@ -1,7 +1,7 @@
 package in.dnsl.handler;
 
 import in.dnsl.exception.AppException;
-import in.dnsl.model.context.UploadContext;
+import in.dnsl.handler.context.UploadContext;
 
 @FunctionalInterface
 public interface UploadHandler {
