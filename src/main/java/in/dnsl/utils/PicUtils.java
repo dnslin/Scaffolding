@@ -24,6 +24,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.security.MessageDigest;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -407,6 +408,25 @@ public class PicUtils {
                     config.position(), config.opacity(), config.scale());
         } else {
             throw new IllegalArgumentException("水印配置无效: 必须提供文本或图像，但不能同时提供两者或两者兼而有之.");
+        }
+    }
+
+    public static String calculateImageHash(BufferedImage image,String type) {
+        try {
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            ImageIO.write(image, type, outputStream);
+            byte[] imageBytes = outputStream.toByteArray();
+
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            byte[] digest = md.digest(imageBytes);
+
+            StringBuilder sb = new StringBuilder();
+            for (byte b : digest) {
+                sb.append(String.format("%02x", b));
+            }
+            return sb.toString();
+        } catch (Exception e) {
+            throw new RuntimeException("计算图像哈希时出错", e);
         }
     }
 }
